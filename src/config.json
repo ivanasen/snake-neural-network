@@ -1,0 +1,18 @@
+{  
+  "InputSize": 150,
+  "Outputs": 1,
+  "Population": 20,
+  "HiddenLayerSize": 15,
+  "KeepAlivePercent": 0.2,
+  "MutationChance": 0.2,
+  "nbWhiskers": 50,
+  "inputsPerWhisker": 3,
+  "whiskerSize": 160,
+  "snakeMaxLength": 10,
+  "snakeSize": 5,
+  "snakeBlurSize": 40,
+  "snakeSpeed": 2.5,
+  "centerEllipseHeight": 300,
+  "centerEllipseWidth": 800,
+  "generationLength": 2000
+}

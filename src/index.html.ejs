@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="ie6" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="ie7" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="ie8" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="ie9" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <!--<![endif]-->
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.6/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.6/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+  <meta charset="utf-8">
+  <title><%= htmlWebpackPlugin.options.title || 'Webpack App'%></title>
+
+  <% if (htmlWebpackPlugin.files.favicon) { %>
+  <link rel="shortcut icon" href="<%= htmlWebpackPlugin.files.favicon%>">
+  <% } %>
+  <% if (htmlWebpackPlugin.options.mobile) { %>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <% } %>
+
+
+</head>
+<body>
+<% if (htmlWebpackPlugin.options.unsupportedBrowser) { %>
+<style>.unsupported-browser { display: none; }</style>
+<div class="unsupported-browser">
+  Sorry, your browser is not supported.  Please upgrade to
+  the latest version or switch your browser to use this site.
+  See <a href="http://outdatedbrowser.com/">outdatedbrowser.com</a>
+  for options.
+</div>
+<% } %>
+
+
+<% if (htmlWebpackPlugin.options.window) { %>
+<script>
+  <% for (var varName in htmlWebpackPlugin.options.window) { %>
+    window['<%=varName%>'] = <%= JSON.stringify(htmlWebpackPlugin.options.window[varName]) %>;
+  <% } %>
+</script>
+<% } %>
+
+<div class="container">
+  <div id="sketch-holder"></div>
+  <!-- <div id="debug-holder">
+    <div id="debug">
+    </div>
+    <button onclick="javascript:pool.reboot()" id="see-from-beginning">Reset simulation</button>
+  </div> --!>
+  <div id="charts-holder">
+    <div class="charts">
+      <canvas id="perfChart" width="400" height="400"></canvas>
+    </div>
+  </div>
+  <div id="age-charts-holder">
+    <div class="charts">
+      <canvas id="ageChart" width="400" height="400"></canvas>
+    </div>
+  </div>
+  <!-- <div id="explain-holder">
+    <h1>Neuroevolution of Neural Network of snakes in the Browser.</h1>
+    This is a demonstration of evolving a neural network thanks to genetics algorithms in the browser
+    using a multilayer perceptron (150-15-15-1).
+    The initial population contains 20 individuals, each assigned a different genome.    
+    At the end the top 7 are kept alive, and the remaining 29 are created by breeding from the 7.
+    Each snake has 50 sensors, each reporting 3 inputs:
+    <ul>
+      <li>1) The distance the sensor has hit something normalized between 0 and 1</li>
+      <li>2) 1 if this sensor touched the enemy body</li>
+      <li>3) 1 if this sensor touched the enemy body</li>
+    </ul>
+  </div> --!>
+</div>
+
+</body>
+</html>

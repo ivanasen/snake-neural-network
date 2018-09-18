@@ -183,9 +183,9 @@ class Pool {
   //   return id ? this.p2GenomeIndex : this.p1GenomeIndex;
   // }
 
-  matchResult(player) {
+  matchResult(player, result) {
     const genome = this.getGenomeOfSnake(player.id);
-    genome.addMatch(1);
+    genome.addMatch(result);
   }
 
   // matchResult(players) {

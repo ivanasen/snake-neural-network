@@ -70,7 +70,7 @@ class Game {
     for (let i = 0; i < this.snakesList.length; i++) {
       const snake = this.snakesList[i];
       if (snake.dead) {
-        pool.matchResult(snake);    
+        pool.matchResult(snake, -1);
         this.snakesList[i] = new Snake(this.snakesList, i, this.width, this.height);
       }
     }

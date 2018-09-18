@@ -6,7 +6,8 @@ import {
     collideLineLine,
     collideLineCircle,
     collidePointEllipse,
-    distNotSquared
+    distNotSquared,
+    collidePointCircle
 } from '../util';
 
 
@@ -82,10 +83,11 @@ class Snake {
         //this.holeLeft = 2 * Math.PI * this.§_-MF§.radius;
         this.direction = 2; // LEFT RIGHT STILL
         this.whiskersize = config.whiskerSize;
-        this.randomPos();
+        this.pos = this.randomPos();
         this.lastInputLayer = _.fill(new Array(config.InputSize), 0); // Keeping it for debugging
         this.lastEvaluation = null; // Same
         this.diedOn = 0;
+        this.foodPosition = this.randomPos();
     }
 
     randomPos() {
@@ -100,7 +102,7 @@ class Snake {
             y = Math.random() * this.canvasHeight;
         }
 
-        this.pos = createVector(x, y);
+        return createVector(x, y);
     }
     // Only used by Human Player
     updateDir() {
@@ -130,6 +132,7 @@ class Snake {
         let hit = false; // Is the whisker triggered ?
         let from = false; // Is it me&wall or enemy?
         let isHead = false; // Is it the enemy head?
+        let food = false;
 
         let shorttestDistance = this.whiskersize;
         //First Checking borders
@@ -211,7 +214,8 @@ class Snake {
             y: lineY,
             hit: hit,
             from: from,
-            isHead: isHead
+            isHead: isHead,
+            food: food
         };
 
         return result;
@@ -261,11 +265,25 @@ class Snake {
             //   this.shouldDraw();            
             this.store();
             this.move();
+            this.eat();
             if (Game.showDraw) this.show();
             this.checkCollisions();
         }
 
 
+    }
+
+    eat() {
+        const collidesFood = collidePointCircle(
+            this.pos.x, 
+            this.pos.y, 
+            this.foodPosition.x,
+            this.foodPosition.y, 
+            config.foodSize);
+        if (collidesFood) {
+            this.foodPosition = this.randomPos();
+            pool.matchResult(curve, 10);
+        }
     }
 
     currentUpdate = 0;

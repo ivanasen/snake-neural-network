@@ -1,8 +1,8 @@
 {  
-  "InputSize": 150,
+  "InputSize": 200,
   "Outputs": 1,
   "Population": 20,
-  "HiddenLayerSize": 15,
+  "HiddenLayerSize": 20,
   "KeepAlivePercent": 0.2,
   "MutationChance": 0.2,
   "nbWhiskers": 50,
@@ -16,5 +16,6 @@
   "centerEllipseWidth": 800,
   "generationLength": 2000,
   "chartMainColor": "hsl(210, 90%, 70%)",
-  "chartSecondaryColor": "hsl(210, 40%, 40%)"
+  "chartSecondaryColor": "hsl(210, 40%, 40%)",
+  "foodSize": 20
 }

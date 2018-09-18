@@ -29,7 +29,7 @@ class Genome {
 
   addMatch(result) {
     this.matches.push(result);    
-    this.fitness -= result;
+    this.fitness += result;
   }
 }
 

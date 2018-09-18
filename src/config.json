@@ -14,5 +14,7 @@
   "snakeSpeed": 2.5,
   "centerEllipseHeight": 300,
   "centerEllipseWidth": 800,
-  "generationLength": 2000
+  "generationLength": 2000,
+  "chartMainColor": "hsl(210, 90%, 70%)",
+  "chartSecondaryColor": "hsl(210, 40%, 40%)"
 }

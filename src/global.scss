@@ -1,5 +1,5 @@
 body {
-  min-height: 100%;
+  min-height: 100vh;
   font-family: Helvetica;
   font-size: 13px;  
   position: relative;
@@ -22,59 +22,80 @@ body {
   padding-top: 10px;
 }
 
-.container {
-  // height: 100%;
-  // display: flex;
-  // flex-wrap: wrap;
-  // flex-direction: row;
-  // align-items: center;
-  // flex-basis: auto;
-}
-
 #sketch-holder {
   align-items: center;
   justify-content: center;
-  // flex: 1;
   text-align: center;
-  // flex-basis: auto;
   min-width: 400px;
   overflow: hidden;
 }
 
 #info-holder {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1;
+  margin: 0px;
+  padding: 10px;
+  padding-top: 5px;
+  background-color: rgba(41, 54, 58, 0.8);
+  border-radius: 10px;
+  transition: opacity .25s ease-in-out;
+}
+
+#hide-info-btn,
+#show-info-btn {
+  color: #f8f8f8;
+  margin-right: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+  line-height: 1;
+  transition: opacity .25s ease-in-out;
+}
+
+// #show-info-btn > i {
+//   font-size: 35px;
+//   transition: opacity .25s ease-in-out;
+// }
+
+#charts-holder {  
+  display: flex;
 }
 
 #show-info-btn {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 30px;
+  right: 30px;  
 }
 
-#charts-holder,
-#age-charts-holder {
-  margin: 0 20px 20px;
-  // align-items: center;
-  // justify-content: center;
-  margin-bottom: 20px;
-  // flex-basis: auto;
-  min-width: 400px;
-  height: 420px;
+#fitness-chart-holder,
+#age-chart-holder {
+  // width: 200px;
+  margin-left: 10px;
+  // height: 200px;  
   border-radius: 5px;
-  overflow: hidden;
-  background-color: rgb(230, 230, 230);
+  // overflow: hidden;
+  // background-color: rgb(230, 230, 230);
 }
 
 #age-charts-holder,
-#charts-holder,
+#fitness-chart-holder,
 #debug-holder {
-  overflow: hidden;
-  background-color: rgb(247, 247, 247);
+  // overflow: hidden;
+  // background-color: rgb(247, 247, 247);
 }
 
 .charts {
-  width: 400px;
-  height: 400px;
+  // width: 220px;
+  // height: 220px;
   margin: auto;
   text-align: center;
+}
+
+div#info-holder.invisible, a#show-info-btn.invisible {
+  opacity: 0;
+  z-index: -1;
 }

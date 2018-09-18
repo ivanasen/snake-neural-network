@@ -68,7 +68,7 @@ class Game {
 
   checkDead() {
     for (let i = 0; i < this.snakesList.length; i++) {
-      const Snake = this.snakesList[i];
+      const snake = this.snakesList[i];
       if (snake.dead) {
         pool.matchResult(snake);    
         this.snakesList[i] = new Snake(this.snakesList, i, this.width, this.height);

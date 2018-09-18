@@ -1,10 +1,6 @@
 import config from '../config.json';
-import {
-    Game
-} from 'game/canvas-setup';
-import {
-    pool
-} from '../genetics/Pool';
+import Game from 'game/Game';
+import { pool } from '../genetics/Pool';
 import _ from 'lodash';
 import {
     collideLineLine,
@@ -65,10 +61,10 @@ const HIT_BORDERS = [
     [centerBottomLeft, centerBottomRight],
 ];
 
-class Curve {
-    constructor(curvesList, id, canvasWidth, canvasHeight) {
+class Snake {
+    constructor(snakesList, id, canvasWidth, canvasHeight) {
         this.id = id;
-        this.curvesList = curvesList;
+        this.snakesList = snakesList;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.age = 0;
@@ -76,8 +72,7 @@ class Curve {
         // this.hue = 220;
         // this.hue = (Math.random() * 360) % 360;
         this.vector;
-        this.history = [];
-        this.image = loadImage('dot.png');
+        this.history = [];        
         this.speed = config.snakeSpeed; //maxspeed
         this.size = config.snakeSize;
         this.radius = 40; //Turning radius??? maxradius?
@@ -155,8 +150,8 @@ class Curve {
 
         let potentialColliders = [];
         //Loop through circles and check if line intersects
-        for (let i = 0; i < this.curvesList.length; i++) {
-            let c = this.curvesList[i];
+        for (let i = 0; i < this.snakesList.length; i++) {
+            let c = this.snakesList[i];
             let history = c.history.slice();
             if (i == this.id) {
                 potentialColliders = potentialColliders.concat(c.history);
@@ -334,13 +329,13 @@ class Curve {
         }
     }
 
-    setCurvesList(curvesList) {
-        this.curvesList = curvesList;
+    setSnakesList(snakesList) {
+        this.snakesList = snakesList;
     }
 
     // Did we collide?
     checkCollisions() {
-        let curvesList = this.curvesList;
+        let snakesList = this.snakesList;
         if (this.history.length < 1)
             return false;
         var potentialColliders = this.history.slice(0, -1);
@@ -348,7 +343,7 @@ class Curve {
         //Adding current pos and history
         potentialColliders.push([this.pos.x, this.pos.y]);
         var ownHistoryIndex = potentialColliders.length;
-        var others = curvesList.filter(c => c.id != this.id);
+        var others = snakesList.filter(c => c.id != this.id);
 
 
         others.forEach(o => {
@@ -387,7 +382,7 @@ class Curve {
         return isColliding || isOutOfBounds || collidesWithEllipse;
     }
 
-    // Debug curve skeleton
+    // Debug snake skeleton
     showSkeleton(pos, target) {
         pos = pos || this.pos;
         this.history.slice(0, -1).map(c => {
@@ -438,7 +433,7 @@ class Curve {
             noStroke();
             ellipse(this.pos.x, this.pos.y, config.snakeBlurSize, config.snakeBlurSize);
 
-            fill(this.hue, 90, 80);
+            fill(this.hue, 90, 70);
             ellipse(this.pos.x, this.pos.y, this.size, this.size);
         }
 
@@ -474,4 +469,4 @@ class Curve {
 
 }
 
-export default Curve;
+export default Snake;

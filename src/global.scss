@@ -1,20 +1,10 @@
-html {
-  background: grey;
-}
 body {
   min-height: 100%;
   font-family: Helvetica;
-  font-size: 13px;
-  //overflow: hidden;
-  position: relative;  
-  padding:0;
-  // padding-top: 20px;
-  margin:0;
-}
-
-#defaultCanvas0 {
-  // border-radius: 5px;
-  //border: 2px solid rgba(0,0,0,.5);
+  font-size: 13px;  
+  position: relative;
+  padding: 0;
+  margin: 0;
 }
 
 #see-from-beginning {
@@ -23,72 +13,68 @@ body {
   z-index: 42;
   transform: translateX(-50%);
 }
+
 #debug {
-  width:420px;
+  width: 420px;
   height: 420px;
   position: relative;
   margin: auto;
   padding-top: 10px;
 }
+
 .container {
-  height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-items: center;
-  /*justify-content: flex-start;
-  align-items: flex-start;
-  align-content: flex-start;*/
-  flex-basis: auto;
+  // height: 100%;
+  // display: flex;
+  // flex-wrap: wrap;
+  // flex-direction: row;
+  // align-items: center;
+  // flex-basis: auto;
 }
 
 #sketch-holder {
   align-items: center;
   justify-content: center;
-  flex:1;
+  // flex: 1;
   text-align: center;
-  flex-basis: auto;
+  // flex-basis: auto;
   min-width: 400px;
   overflow: hidden;
 }
 
-#explain-holder,
+#info-holder {
+  display: none;
+}
+
+#show-info-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
 #charts-holder,
-#genealogic-holder,
 #age-charts-holder {
   margin: 0 20px 20px;
-  align-items: center;
-  justify-content: center;
-  flex:1;
-  margin-bottom:20px;
-  flex-basis: auto;
+  // align-items: center;
+  // justify-content: center;
+  margin-bottom: 20px;
+  // flex-basis: auto;
   min-width: 400px;
   height: 420px;
   border-radius: 5px;
   overflow: hidden;
-  background-color: rgb(230,230,230);
+  background-color: rgb(230, 230, 230);
 }
 
 #age-charts-holder,
 #charts-holder,
-#genealogic-holder,
-#defaultCanvas0,
 #debug-holder {
-  border-radius: 5px;
   overflow: hidden;
-  box-shadow: 0px 6px 11px 1px rgba(0, 0, 0, 0.2);
   background-color: rgb(247, 247, 247);
-}
-
-#explain-holder {
-  overflow: scroll;
-  padding:20px;
-  line-height: 20px;
 }
 
 .charts {
   width: 400px;
-  height:400px;
+  height: 400px;
   margin: auto;
   text-align: center;
 }

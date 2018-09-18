@@ -175,42 +175,42 @@ class Pool {
     return this.genomes[index];
   }
 
-  getGenomeOfCurve(index) {
+  getGenomeOfSnake(index) {
     return this.getPlayerGenome(index);
   }
 
-  // getIndexOfCurveGenome(id) {
+  // getIndexOfSnakeGenome(id) {
   //   return id ? this.p2GenomeIndex : this.p1GenomeIndex;
   // }
 
   matchResult(player) {
-    const genome = this.getGenomeOfCurve(player.id);
+    const genome = this.getGenomeOfSnake(player.id);
     genome.addMatch(1);
   }
 
   // matchResult(players) {
   //   players.forEach(player => {
-  //     const genome = this.getGenomeOfCurve(player.id);
+  //     const genome = this.getGenomeOfSnake(player.id);
   //     genome.addMatch({
   //       score: ~~(10 + Math.log10(player.diedAt))
   //     });
   //   });
   // };
 
-  // Receives both Curves and id of the
+  // Receives both Snakes and id of the
   // matchResult({winner, loser}) {
   //   // Winner adds loser to its matches
-  //   const winnerGenome = this.getGenomeOfCurve(winner.id);
-  //   const loserGenome = this.getGenomeOfCurve(loser.id);
+  //   const winnerGenome = this.getGenomeOfSnake(winner.id);
+  //   const loserGenome = this.getGenomeOfSnake(loser.id);
   //   winnerGenome.addMatch(
   //     {
-  //       opponent: this.getIndexOfCurveGenome(loser.id),
+  //       opponent: this.getIndexOfSnakeGenome(loser.id),
   //       score: ~~(10 + Math.log10(winner.diedAt)),
   //       winner:true,
   //     });
   //   loserGenome.addMatch(
   //     {
-  //       opponent: this.getIndexOfCurveGenome(winner.id),
+  //       opponent: this.getIndexOfSnakeGenome(winner.id),
   //       score: ~~(Math.log10(loser.diedAt)),
   //       winner:false,
   //     });

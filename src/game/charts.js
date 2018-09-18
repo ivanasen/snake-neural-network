@@ -1,4 +1,5 @@
 import config from '../config';
+
 const perfChart = () => {
   return new Chart(document.getElementById("perfChart"), {
       type: 'line',

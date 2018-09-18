@@ -41,35 +41,28 @@
 <% } %>
 
 <div class="container">
-  <div id="sketch-holder"></div>
+  <div id="sketch-holder">
+
+    <button id="show-info-btn">Show Network Info</button>
+  
+    <div id="info-holder">
+      <div id="charts-holder">
+        <div class="charts">
+          <canvas id="perfChart" width="400" height="400"></canvas>
+        </div>
+      </div>
+      <div id="age-charts-holder">
+        <div class="charts">
+          <canvas id="ageChart" width="400" height="400"></canvas>
+        </div>
+      </div>    
+    </div>
+  </div>
   <!-- <div id="debug-holder">
     <div id="debug">
     </div>
     <button onclick="javascript:pool.reboot()" id="see-from-beginning">Reset simulation</button>
-  </div> --!>
-  <div id="charts-holder">
-    <div class="charts">
-      <canvas id="perfChart" width="400" height="400"></canvas>
-    </div>
-  </div>
-  <div id="age-charts-holder">
-    <div class="charts">
-      <canvas id="ageChart" width="400" height="400"></canvas>
-    </div>
-  </div>
-  <!-- <div id="explain-holder">
-    <h1>Neuroevolution of Neural Network of snakes in the Browser.</h1>
-    This is a demonstration of evolving a neural network thanks to genetics algorithms in the browser
-    using a multilayer perceptron (150-15-15-1).
-    The initial population contains 20 individuals, each assigned a different genome.    
-    At the end the top 7 are kept alive, and the remaining 29 are created by breeding from the 7.
-    Each snake has 50 sensors, each reporting 3 inputs:
-    <ul>
-      <li>1) The distance the sensor has hit something normalized between 0 and 1</li>
-      <li>2) 1 if this sensor touched the enemy body</li>
-      <li>3) 1 if this sensor touched the enemy body</li>
-    </ul>
-  </div> --!>
+  </div> --!>  
 </div>
 
 </body>

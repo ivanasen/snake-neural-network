@@ -2,7 +2,7 @@
 import 'global.scss';
 import { pool } from 'genetics/Pool';
 import { sm } from 'game/SaveManager';
-import { Game } from 'game/canvas-setup';
+import Game from 'game/Game';
 import 'game/canvas-debug';
 
 pool.init();
@@ -21,14 +21,15 @@ window.setup = () => {
   console.log(Game);
 }
 
+// Called on every frame
+window.draw = () => {
+  Game.draw();
+}
+
 // Reset the Canvas
 window.reset = () => {
   Game.reset();
 }
 
-// Called on every frame
-window.draw = () => {
-  Game.draw();
-}
 
 //setTimeout(reset,500);

@@ -9,8 +9,8 @@ import 'game/canvas-debug';
 pool.init();
 
 sm.getLoadState(() => {
-  // chart.data.datasets[0].data = pool.championsPerfs.slice().map(c => { return {x:c.generation,y:c.fitness}});
-  // chart.update();
+  chart.data.datasets[0].data = pool.championsPerfs.slice().map(c => { return {x:c.generation,y:c.fitness}});
+  chart.update();
   reset();
 });
 

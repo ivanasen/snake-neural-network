@@ -294,11 +294,17 @@ class Snake {
     // We arbitrarily decided which is going to do what
     // I could have decided a was stay-still, b was left
     setPressedKey(outputs) {
-        var value = outputs[0];
+        let value = outputs[0];
         // console.log(value);
-        this.direction = 2;
-        if (outputs > 0.55) this.direction = 1;
-        if (outputs < .45) this.direction = 0;
+        let newDirection = 2;
+        if (value > 0.55) newDirection = 1;
+        if (value < .45) newDirection = 0;
+
+        if (newDirection != this.direction) {
+            pool.matchResult(this, 1);
+        }
+
+        this.direction = newDirection;
     }
 
     // Adds the snake position to its history if far enough from last one
@@ -405,7 +411,8 @@ class Snake {
     }
 
     stop() {
-        //console.log('RIP',this.id);        
+        //console.log('RIP',this.id);
+        pool.matchResult(this, -20);
         this.dead = true;
     }
 

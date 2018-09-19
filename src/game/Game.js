@@ -8,6 +8,7 @@ import charts from './charts';
 
 class Game {
   constructor() {
+    this.simulationSpeed = config.simulationSpeed;
     this.snakesCount = config.Population;
     this.snakesList = [];
     this.showDebug = 1;
@@ -36,7 +37,6 @@ class Game {
 
   reset() {
     background(180, 30, 6);
-    this.snakesList.forEach(snake => pool.matchResult(snake));
 
     this.snakesList = [];
 
@@ -47,9 +47,7 @@ class Game {
 
     if (this.showSnakesSensors) {
       this.snakesList.forEach(snake => Snake.setDebug());      
-    }    
-
-    pool.newGeneration();
+    }
   }
 
   draw() {
@@ -58,8 +56,10 @@ class Game {
     if (!this.snakesList) return;
     if (this.snakesList.some(c => c.debug)) background(51);
 
-    this.checkDead();
-    this.handleNextTick();
+    for (let i = 0; i < this.simulationSpeed; i++) {
+      this.checkDead();
+      this.handleNextTick();
+    }
   }
 
   clear() {
@@ -69,17 +69,16 @@ class Game {
   checkDead() {
     for (let i = 0; i < this.snakesList.length; i++) {
       const snake = this.snakesList[i];
-      if (snake.dead) {
-        pool.matchResult(snake);    
+      if (snake.dead) {        
         this.snakesList[i] = new Snake(this.snakesList, i, this.width, this.height);
       }
     }
   }
 
   handleNextTick() {
-    // if (pool.roundTicksElapsed >= pool.maxRoundTicks) {
-    //   pool.newGeneration();
-    // }
+    if (pool.roundTicksElapsed >= pool.maxRoundTicks) {
+      pool.newGeneration();
+    }
 
     pool.roundTicksElapsed++;
     if (pool.roundTicksElapsed % 2 == 0) {      

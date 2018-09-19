@@ -6,7 +6,7 @@ class Genome {
     this.network = {};
     this.matches = [];
     this.addNetwork();
-    this.fitness = 100;
+    this.fitness = 0;
     this.age = 0;
   }
   
@@ -29,7 +29,7 @@ class Genome {
 
   addMatch(result) {
     this.matches.push(result);    
-    this.fitness -= result;
+    this.fitness += result;
   }
 }
 

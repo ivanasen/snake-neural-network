@@ -2,6 +2,7 @@
   "InputSize": 150,
   "Outputs": 1,
   "Population": 20,
+  "simulationSpeed": 1,
   "HiddenLayerSize": 15,
   "KeepAlivePercent": 0.2,
   "MutationChance": 0.2,

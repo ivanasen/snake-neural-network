@@ -56,7 +56,7 @@ class Pool {
 
 
     // Reset Matches & fitness
-    this.genomes.forEach(g => {g.matches = []; g.fitness = 100});
+    this.genomes.forEach(g => {g.matches = []; g.fitness = 0});
 
     //Save JSON
     this.saveState(this);
@@ -183,9 +183,9 @@ class Pool {
   //   return id ? this.p2GenomeIndex : this.p1GenomeIndex;
   // }
 
-  matchResult(player) {
+  matchResult(player, score) {
     const genome = this.getGenomeOfSnake(player.id);
-    genome.addMatch(1);
+    genome.addMatch(score);
   }
 
   // matchResult(players) {

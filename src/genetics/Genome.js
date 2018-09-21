@@ -1,15 +1,15 @@
-import config from '../config.json';
-import { Architect, Network } from 'synaptic';
+import config from '../config.json'
+import { Architect, Network } from 'synaptic'
 
 class Genome {
   constructor() {
-    this.network = {};
-    this.matches = [];
-    this.addNetwork();
-    this.fitness = 0;
-    this.age = 0;
+    this.network = {}
+    this.matches = []
+    this.addNetwork()
+    this.fitness = 0
+    this.age = 0
   }
-  
+
   addNetwork() {
     // Remember to add bias when evaluating
     const network = new Architect.Perceptron(
@@ -17,20 +17,20 @@ class Genome {
       config.HiddenLayerSize,
       config.HiddenLayerSize,
       config.Outputs
-    );
+    )
 
-    this.network = network;
-    return network;
+    this.network = network
+    return network
   }
 
   hydrateNetwork() {
-    this.network = Network.fromJSON(this.network);
+    this.network = Network.fromJSON(this.network)
   }
 
   addMatch(result) {
-    this.matches.push(result);    
-    this.fitness += result;
+    this.matches.push(result)
+    this.fitness += result
   }
 }
 
-export default Genome;
+export default Genome

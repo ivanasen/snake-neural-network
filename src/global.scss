@@ -1,7 +1,7 @@
 body {
   min-height: 100vh;
   font-family: Helvetica;
-  font-size: 13px;  
+  font-size: 13px;
   position: relative;
   padding: 0;
   margin: 0;
@@ -43,7 +43,7 @@ body {
   padding-top: 5px;
   background-color: rgba(41, 54, 58, 0.8);
   border-radius: 10px;
-  transition: opacity .25s ease-in-out;
+  transition: opacity 0.25s ease-in-out;
 }
 
 #hide-info-btn,
@@ -53,7 +53,7 @@ body {
   margin-top: 8px;
   cursor: pointer;
   line-height: 1;
-  transition: opacity .25s ease-in-out;
+  transition: opacity 0.25s ease-in-out;
 }
 
 // #show-info-btn > i {
@@ -61,21 +61,21 @@ body {
 //   transition: opacity .25s ease-in-out;
 // }
 
-#charts-holder {  
+#charts-holder {
   display: flex;
 }
 
 #show-info-btn {
   position: absolute;
   bottom: 30px;
-  right: 30px;  
+  right: 30px;
 }
 
 #fitness-chart-holder,
 #age-chart-holder {
   // width: 200px;
   margin-left: 10px;
-  // height: 200px;  
+  // height: 200px;
   border-radius: 5px;
   // overflow: hidden;
   // background-color: rgb(230, 230, 230);
@@ -95,7 +95,8 @@ body {
   text-align: center;
 }
 
-div#info-holder.invisible, a#show-info-btn.invisible {
+div#info-holder.invisible,
+a#show-info-btn.invisible {
   opacity: 0;
   z-index: -1;
 }

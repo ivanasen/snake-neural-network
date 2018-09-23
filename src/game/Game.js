@@ -1,21 +1,25 @@
-import config from '../config.json'
-import { pool } from '../genetics/Pool'
-import Snake from './Snake'
 import _ from 'lodash'
+
+import config from '../config.json'
 import charts from './charts'
+import { pool } from '../genetics/Pool'
+import FoodPool from './FoodPool'
+import { debug } from 'util';
+import Snake from './Snake'
 
 class Game {
   constructor() {
     this.simulationSpeed = config.simulationSpeed
     this.snakesCount = config.Population
     this.snakesList = []
-    this.showDebug = 1
+    this.debug = false
     this.showDraw = 1
     this.showSnakesSensors = 0
     this.humanControlled = 0
     this.frameCount = 0
     this.width = window.innerWidth
     this.height = window.innerHeight
+    this.shouldEvolve = config.shouldEvolve    
     this.setupChart()
   }
 
@@ -29,6 +33,7 @@ class Game {
   setup() {
     this.snakesList = []
     const canvas = createCanvas(this.width, this.height)
+    this.foodPool = new FoodPool(config.foodAmount, this.width, this.height)
     canvas.parent('sketch-holder')
     colorMode(HSB)
   }
@@ -39,7 +44,7 @@ class Game {
     this.snakesList = []
 
     _.range(0, this.snakesCount).forEach(id => {
-      const snake = new Snake(this.snakesList, id, this.width, this.height)
+      const snake = new Snake(this.snakesList, id, this.width, this.height, this.foodPool, this.debug)
       this.snakesList.push(snake)
     })
 
@@ -52,16 +57,16 @@ class Game {
     this.clear()
 
     if (!this.snakesList) return
-    if (this.snakesList.some(c => c.debug)) background(51)
 
     for (let i = 0; i < this.simulationSpeed; i++) {
+      this.foodPool.draw()
       this.checkDead()
       this.handleNextTick()
     }
   }
 
   clear() {
-    background(360, 100, 0, 0.03)
+    this.debug ? background(0, 0, 0) : background(360, 100, 0, 0.03)    
   }
 
   checkDead() {
@@ -72,14 +77,16 @@ class Game {
           this.snakesList,
           i,
           this.width,
-          this.height
+          this.height,
+          this.foodPool,
+          this.debug
         )
       }
     }
   }
 
   handleNextTick() {
-    if (pool.roundTicksElapsed >= pool.maxRoundTicks) {
+    if (pool.roundTicksElapsed >= pool.maxRoundTicks && this.shouldEvolve) {
       pool.newGeneration()
     }
 

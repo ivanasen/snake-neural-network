@@ -6,7 +6,9 @@ import {
   collideLineLine,
   collideLineCircle,
   collidePointEllipse,
-  distNotSquared
+  distNotSquared,
+  collidePointCircle,
+  getRandomPosition
 } from '../util'
 
 const topLeft = {
@@ -61,7 +63,7 @@ const HIT_BORDERS = [
 ]
 
 class Snake {
-  constructor(snakesList, id, canvasWidth, canvasHeight) {
+  constructor(snakesList, id, canvasWidth, canvasHeight, foodPool, debug = false) {
     this.id = id
     this.snakesList = snakesList
     this.canvasWidth = canvasWidth
@@ -78,50 +80,16 @@ class Snake {
     this.angle = TWO_PI * Math.random() //
     this.maxAngle = TWO_PI / 9
     this.stepAngle = this.maxAngle / 20
-    //this.holeLeft = 2 * Math.PI * this.§_-MF§.radius;
     this.direction = 2 // LEFT RIGHT STILL
     this.whiskersize = config.whiskerSize
-    this.randomPos()
+    this.pos = getRandomPosition(this.canvasWidth, this.canvasHeight)
     this.lastInputLayer = _.fill(new Array(config.InputSize), 0) // Keeping it for debugging
     this.lastEvaluation = null // Same
     this.diedOn = 0
-  }
-
-  randomPos() {
-    const x = Math.random() * this.canvasWidth
-    let y
-    if (
-      x > (this.canvasWidth - config.centerEllipseWidth) / 2 &&
-      x < (this.canvasWidth + config.centerEllipseWidth) / 2
-    ) {
-      y =
-        Math.random() > 0.5
-          ? (Math.random() * (this.canvasHeight - config.centerEllipseHeight)) /
-              2 +
-            (this.canvasHeight + config.centerEllipseHeight) / 2
-          : Math.random() *
-            ((this.canvasHeight - config.centerEllipseHeight) / 2)
-    } else {
-      y = Math.random() * this.canvasHeight
-    }
-
-    this.pos = createVector(x, y)
-  }
-  // Only used by Human Player
-  updateDir() {
-    const left = keyIsDown(LEFT_ARROW)
-    const right = keyIsDown(RIGHT_ARROW)
-    if (left) {
-      this.direction = 0
-    }
-
-    if (right) {
-      this.direction = 1
-    }
-
-    if (!left && !right) {
-      this.direction = 2
-    }
+    this.debug = debug
+    this.foodPool = foodPool
+    this.ticksElapsed = 0
+    this.healthDecreasePeriod = 3000
   }
 
   getDistanceToHitSensor(x, y, a) {
@@ -134,7 +102,6 @@ class Snake {
     let lineY = y + this.whiskersize * Math.sin(a)
     let hit = false // Is the whisker triggered ?
     let from = false // Is it me&wall or enemy?
-    let isHead = false // Is it the enemy head?
 
     let shorttestDistance = this.whiskersize
     //First Checking borders
@@ -201,29 +168,38 @@ class Snake {
           lineX = collided[0]
           lineY = collided[1]
           from = p.id != this.id
-          isHead = p.head ? 1 : 0
         }
       }
     }
 
+    // const hitFood = this.foodPool.food.map((piece) =>
+    //   collideLineCircle(x, y, piece.x, piece.y, piece.x, piece.y, this.foodPool.foodSize)
+    // ).find(Boolean) || false
+
+    // if (hitFood) {
+    //   hit = dist(x, y, hitFood[0], hitFood[1])
+    //   lineX = hitFood[0]
+    //   lineY = hitFood[1]
+    //   from = false
+    //   isFood = true
+    // }
+
     if (this.debug) {
-      fill(255, 0, 0)
-      stroke(225, 204, 0)
+      fill(360, 100, 100)
+      noStroke()
       ellipse(lineX, lineY, 4)
-      ellipse(x, y, 2)
 
       //let result = [this.pos.x+100*cos(angle),this.pos.y+100*sin(angle)];
       if (hit) {
-        stroke(255, 0, 0)
+        stroke(200, 100, 100)
+
         if (from) {
-          stroke(0, 255, 0)
-        }
-        if (isHead) {
-          stroke(0, 0, 255)
+          stroke(100, 100, 100)
         }
       } else {
-        stroke(225, 204, 0)
+        stroke(40, 100, 100)
       }
+
       line(x, y, lineX, lineY)
     }
 
@@ -232,8 +208,7 @@ class Snake {
       x: lineX,
       y: lineY,
       hit: hit,
-      from: from,
-      isHead: isHead
+      from: from
     }
 
     return result
@@ -249,46 +224,55 @@ class Snake {
       0
     )
 
+    const foodDistance = this.getFoodDistance(this.pos.x, this.pos.y)
+    const furthestDist = Math.sqrt(this.canvasWidth * this.canvasWidth + this.canvasHeight * this.canvasHeight)
+
     let step = TWO_PI / (displayedWhiskers * 1.2)
     for (let i = 0; i < displayedWhiskers; i++) {
       let modifier = i > displayedWhiskers / 2 ? -1 : 1
       let angle = this.angle + step * (i % (displayedWhiskers / 2)) * modifier
-      let x = this.pos.x
-      let y = this.pos.y
-      let result = this.getDistanceToHitSensor(x, y, angle)
+      let result = this.getDistanceToHitSensor(this.pos.x, this.pos.y, angle)
+
       if (result.hit) {
         let index = i * 3
-        //  inputLayer[index] = 1;
         result.hit = Math.min(result.hit, this.whiskersize)
         inputLayer[index] = 1 - map(result.hit, 0, this.whiskersize, 0, 1)
         inputLayer[index + 1] = result.from
-        inputLayer[index + 2] = result.isHead
+        inputLayer[index + 2] = map(foodDistance, 0, furthestDist, 0, 1)        
       }
     }
     return inputLayer
   }
 
-  update() {
-    if (this.dead) {
-      //this.getInputLayer();
-      if (Game.showDraw) this.showSkeleton()
-      return
-    } else {
-      // this.history.slice(0,-1).map(c => {
-      //   fill(0,0,255);
-      //   ellipse(c.x,c.y,this.size);
-      // });
+  getFoodDistance(x, y) {
+    let closestFood
+    this.foodPool.food.forEach((piece) => {
+      const distance = dist(x, y, piece.x, piece.y)
+      if (!closestFood || distance < closestFood.dist) {
+        closestFood = { x: piece.x, y: piece.y, dist: distance }
+      }
+    })
 
-      //   if (this.humanControlled) {
-      //     this.updateDir();
-      //   }
+    if (closestFood) {
+      if (this.debug) {
+        stroke(300, 100, 100)
+        line(x, y, closestFood.x, closestFood.y)
+      }
 
-      //   this.shouldDraw();
-      this.store()
-      this.move()
-      if (Game.showDraw) this.show()
-      this.checkCollisions()
+      return closestFood.dist
     }
+
+    return 1
+  }
+
+  update() {
+    if (this.dead) return
+
+    this.store()
+    this.move()
+    this.eat()
+    if (Game.showDraw) this.show()
+    this.checkCollisions()
   }
 
   currentUpdate = 0
@@ -388,7 +372,6 @@ class Snake {
         if (i > ownHistoryIndex) {
           this.diedOn = 1 // He died on enemy
         }
-        if (Game.showDraw) this.showSkeleton(pos, target)
         this.stop()
       }
       return colliding
@@ -409,37 +392,14 @@ class Snake {
       this.pos.y > this.canvasHeight ||
       this.pos.y < 0
     if (isOutOfBounds || collidesWithEllipse) {
-      if (Game.showDraw) this.showSkeleton(this.pos)
       this.stop()
     }
     return isColliding || isOutOfBounds || collidesWithEllipse
   }
 
-  // Debug snake skeleton
-  showSkeleton(pos, target) {
-    pos = pos || this.pos
-    this.history.slice(0, -1).map(c => {
-      if (this.id <= 0) {
-        stroke(255, 90, 137)
-        fill(251, 71, 107)
-      } else {
-        fill(102, 51, 153)
-        stroke(110, 80, 187)
-      }
-
-      // ellipse(c.x, c.y, this.size);
-    })
-    if (target) {
-      fill(255, 0, 0)
-      // ellipse(target.x, target.y, this.size);
-    }
-    fill(0, 255, 0)
-    // ellipse(pos.x, pos.y, this.size);
-  }
-
   stop() {
     //console.log('RIP',this.id);
-    pool.matchResult(this, -20)
+    pool.matchResult(this, -40)
     this.dead = true
   }
 
@@ -451,29 +411,10 @@ class Snake {
     // } else {
     // if (this.debug) {
 
-    if (!this.debug) {
-      const gradient = drawingContext.createRadialGradient(
-        this.pos.x,
-        this.pos.y,
-        0,
-        this.pos.x,
-        this.pos.y,
-        config.snakeBlurSize / 2
-      )
-      gradient.addColorStop(0, `hsla(${this.hue}, 90%, 50%, 0.2)`)
-      gradient.addColorStop(1, 'transparent')
-      drawingContext.fillStyle = gradient
-
-      noStroke()
-      ellipse(
-        this.pos.x,
-        this.pos.y,
-        config.snakeBlurSize,
-        config.snakeBlurSize
-      )
-
-      fill(this.hue, 90, 70)
-      ellipse(this.pos.x, this.pos.y, this.size, this.size)
+    if (this.debug) {
+      this.showHistory()
+    } else {
+      this.showTrail()
     }
 
     // stroke(this.hue, 204, 100);
@@ -488,8 +429,37 @@ class Snake {
     // }
   }
 
-  setDebug() {
-    this.debug = true
+  showHistory() {
+    stroke(this.hue, 90, 70)
+    fill(this.hue, 90, 70, 0.3)
+    this.history.forEach(pos => ellipse(pos.x, pos.y, this.size, this.size))
+    
+    ellipse(this.pos.x, this.pos.y, this.size, this.size)
+  }
+
+  showTrail() {
+    const gradient = drawingContext.createRadialGradient(
+      this.pos.x,
+      this.pos.y,
+      0,
+      this.pos.x,
+      this.pos.y,
+      config.snakeBlurSize / 2
+    )
+    gradient.addColorStop(0, `hsla(${this.hue}, 90%, 50%, 0.2)`)
+    gradient.addColorStop(1, 'transparent')
+    drawingContext.fillStyle = gradient
+    noStroke()
+    ellipse(this.pos.x, this.pos.y, config.snakeBlurSize, config.snakeBlurSize)
+
+    fill(this.hue, 90, 70)
+    const lastPos = this.history[this.history.length - 1]
+    ellipse(lastPos.x, lastPos.y, this.size, this.size)
+    ellipse(this.pos.x, this.pos.y, this.size, this.size)
+  }
+
+  setDebug(debug) {
+    this.debug = debug
   }
 
   toggleDebug() {
@@ -502,6 +472,28 @@ class Snake {
     }
     this.pos.x += this.speed * Math.cos(this.angle)
     this.pos.y += this.speed * Math.sin(this.angle)
+  }
+
+  eat() {
+    this.foodPool.food.forEach((piece, index) => {
+      const eatsFood = collidePointCircle(this.pos.x, this.pos.y, piece.x, piece.y, this.foodPool.foodSize)
+      if (eatsFood) {
+        this.foodPool.eat(index)
+        pool.matchResult(this, 10)
+      } else {
+        if (this.shouldDecreaseHealth()) pool.matchResult(this, -1)
+      }
+    })
+  }
+
+  shouldDecreaseHealth() {
+    if (this.ticksElapsed  >= this.healthDecreasePeriod) {
+      this.ticksElapsed = 0
+      return true
+    } else {
+      this.ticksElapsed++
+      return false
+    }
   }
 }
 

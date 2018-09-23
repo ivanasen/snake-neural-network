@@ -1,3 +1,5 @@
+import config from './config.json'
+
 const _collideDebug = false
 
 export const distNotSquared = (x1, y1, x2, y2) =>
@@ -61,7 +63,7 @@ export const collideLineCircle = (x1, y1, x2, y2, cx, cy, diameter) => {
   // if so, return true immediately
   const inside1 = collidePointCircle(x1, y1, cx, cy, diameter)
   const inside2 = collidePointCircle(x2, y2, cx, cy, diameter)
-  if (inside1 || inside2) return true
+  if (inside1 || inside2) return [cx, cy]
 
   // get length of the line
   let distX = x1 - x2
@@ -159,3 +161,23 @@ export const collideLineEllipse = (x1, y1, x2, y2, cx, cy, rx, ry) => {
 
 export const collidePointEllipse = (x, y, cx, cy, rx, ry) =>
   ((x - cx) * (x - cx)) / (rx * rx) + ((y - cy) * (y - cy)) / (ry * ry) <= 1
+
+export const getRandomPosition = (width, height) => {
+  const x = Math.random() * width
+  let y
+  if (
+    x > (width - config.centerEllipseWidth) / 2 &&
+    x < (width + config.centerEllipseWidth) / 2
+  ) {
+    y =
+      Math.random() > 0.5
+        ? (Math.random() * (height - config.centerEllipseHeight)) /
+            2 +
+          (height + config.centerEllipseHeight) / 2
+        : Math.random() * ((height - config.centerEllipseHeight) / 2)
+  } else {
+    y = Math.random() * height
+  }
+
+  return createVector(x, y)
+}

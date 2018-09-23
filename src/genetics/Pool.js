@@ -8,19 +8,24 @@ class Pool {
     this.roundTicksElapsed = 0
     this.maxRoundTicks = config.generationLength
     this.generation = 0
-    this.maxFitness = 0
-    this.previousMaxFitness = 0
     this.championsPerfs = []
     this.playersGenomeIndexes = []
     this.genomes = []
   }
 
   newGeneration() {
-    this.roundTicksElapsed = 0
+    this.roundTicksElapsed = 0    
 
-    this.genomes.forEach(g => {
-      if (g.fitness > this.maxFitness) this.maxFitness = g.fitness
-    })
+    const generationMax = Math.max.apply(Math, this.genomes.map(g => g.fitness))
+    const chartsData = {
+      x: pool.generation,
+      y: generationMax
+    }
+
+    this.championsPerfs.push(chartsData)
+    this.hydrateChart()
+
+    console.log(this.genomes.map(g => g.fitness))
 
     // Kill worst genomes
     this.genomes = this.selectBestGenomes(
@@ -51,15 +56,6 @@ class Pool {
     this.genomes.forEach(g => {
       g.age++
     })
-
-    const generationMax = Math.max.apply(Math, this.genomes.map(g => g.fitness))
-    const chartsData = {
-      x: pool.generation,
-      y: generationMax
-    }
-
-    this.championsPerfs.push(chartsData)
-    this.hydrateChart()
 
     // Reset Matches & fitness
     this.genomes.forEach(g => {
@@ -171,7 +167,6 @@ class Pool {
   }
 
   init() {
-    this.maxFitness = 0
     this.generation = 0
     this.championsPerfs = []
     this.genomes = this.buildInitGenomes()

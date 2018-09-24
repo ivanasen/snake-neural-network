@@ -32,23 +32,23 @@ const bottomRight = {
 }
 
 const centerTopLeft = {
-  x: (window.innerWidth - config.centerEllipseWidth) / 2,
-  y: (window.innerHeight - config.centerEllipseHeight) / 2
+  x: (window.innerWidth - config.CenterEllipseWidth) / 2,
+  y: (window.innerHeight - config.CenterEllipseHeight) / 2
 }
 
 const centerTopRight = {
-  x: (window.innerWidth + config.centerEllipseWidth) / 2,
-  y: (window.innerHeight - config.centerEllipseHeight) / 2
+  x: (window.innerWidth + config.CenterEllipseWidth) / 2,
+  y: (window.innerHeight - config.CenterEllipseHeight) / 2
 }
 
 const centerBottomLeft = {
-  x: (window.innerWidth - config.centerEllipseWidth) / 2,
-  y: (window.innerHeight + config.centerEllipseHeight) / 2
+  x: (window.innerWidth - config.CenterEllipseWidth) / 2,
+  y: (window.innerHeight + config.CenterEllipseHeight) / 2
 }
 
 const centerBottomRight = {
-  x: (window.innerWidth + config.centerEllipseWidth) / 2,
-  y: (window.innerHeight + config.centerEllipseHeight) / 2
+  x: (window.innerWidth + config.CenterEllipseWidth) / 2,
+  y: (window.innerHeight + config.CenterEllipseHeight) / 2
 }
 
 const HIT_BORDERS = [
@@ -63,7 +63,14 @@ const HIT_BORDERS = [
 ]
 
 class Snake {
-  constructor(snakesList, id, canvasWidth, canvasHeight, foodPool, debug = false) {
+  constructor(
+    snakesList,
+    id,
+    canvasWidth,
+    canvasHeight,
+    foodPool,
+    debug = false
+  ) {
     this.id = id
     this.snakesList = snakesList
     this.canvasWidth = canvasWidth
@@ -74,22 +81,20 @@ class Snake {
     // this.hue = (Math.random() * 360) % 360;
     this.vector
     this.history = []
-    this.speed = config.snakeSpeed //maxspeed
-    this.size = config.snakeSize
+    this.speed = config.SnakeSpeed //maxspeed
+    this.size = config.SnakeSize
     this.radius = 40 //Turning radius??? maxradius?
     this.angle = TWO_PI * Math.random() //
     this.maxAngle = TWO_PI / 9
     this.stepAngle = this.maxAngle / 20
     this.direction = 2 // LEFT RIGHT STILL
-    this.whiskersize = config.whiskerSize
+    this.whiskersize = config.WhiskerSize
     this.pos = getRandomPosition(this.canvasWidth, this.canvasHeight)
     this.lastInputLayer = _.fill(new Array(config.InputSize), 0) // Keeping it for debugging
     this.lastEvaluation = null // Same
     this.diedOn = 0
     this.debug = debug
     this.foodPool = foodPool
-    this.ticksElapsed = 0
-    this.healthDecreasePeriod = 3000
   }
 
   getDistanceToHitSensor(x, y, a) {
@@ -101,17 +106,18 @@ class Snake {
     let lineX = x + this.whiskersize * Math.cos(a)
     let lineY = y + this.whiskersize * Math.sin(a)
     let hit = false // Is the whisker triggered ?
-    let from = false // Is it me&wall or enemy?
+    let from = false // Is it me, wall or enemy ?
+    let isFood = false // Is it food ?
 
-    let shorttestDistance = this.whiskersize
+    let shortestDistance = this.whiskersize
     //First Checking borders
     let hitBorders =
-      HIT_BORDERS.map(b => {
-        let hit2 = collideLineLine(
-          b[0].x,
-          b[0].y,
-          b[1].x,
-          b[1].y,
+      HIT_BORDERS.map(border => {
+        const hitBorder = collideLineLine(
+          border[0].x,
+          border[0].y,
+          border[1].x,
+          border[1].y,
           x,
           y,
           lineX,
@@ -119,23 +125,25 @@ class Snake {
           true
         )
 
-        return hit2.x == false && hit2.y == false ? false : [hit2.x, hit2.y]
+        return hitBorder.x === false && hitBorder.y === false
+          ? false
+          : [hitBorder.x, hitBorder.y]
       }).find(Boolean) || false
 
     if (hitBorders) {
       hit = dist(this.pos.x, this.pos.y, hitBorders[0], hitBorders[1])
-      shorttestDistance = hit
+      shortestDistance = hit
       lineX = hitBorders[0]
       lineY = hitBorders[1]
-      from = false
+      isFood = false
+      from = true
     }
 
     let potentialColliders = []
     //Loop through circles and check if line intersects
     for (let i = 0; i < this.snakesList.length; i++) {
       let c = this.snakesList[i]
-      let history = c.history.slice()
-      if (i == this.id) {
+      if (i === this.id) {
         potentialColliders = potentialColliders.concat(c.history)
       } else {
         potentialColliders = potentialColliders.concat(c.history, [
@@ -160,41 +168,40 @@ class Snake {
         this.size * 2
       )
       if (collided) {
-        //console.log('Whisker touching!!',collided);
         let distance = dist(x, y, collided[0], collided[1])
-        if (distance < shorttestDistance) {
-          shorttestDistance = distance
+        if (distance < shortestDistance) {
+          shortestDistance = distance
           hit = distance
           lineX = collided[0]
           lineY = collided[1]
-          from = p.id != this.id
+          isFood = false
+          from = true
         }
       }
     }
 
-    // const hitFood = this.foodPool.food.map((piece) =>
-    //   collideLineCircle(x, y, piece.x, piece.y, piece.x, piece.y, this.foodPool.foodSize)
-    // ).find(Boolean) || false
+    const hitFood = this.foodPool.food.map((piece) =>
+      collideLineCircle(x, y, lineX, lineY, piece.x, piece.y, this.foodPool.foodSize)
+    ).find(Boolean) || false
 
-    // if (hitFood) {
-    //   hit = dist(x, y, hitFood[0], hitFood[1])
-    //   lineX = hitFood[0]
-    //   lineY = hitFood[1]
-    //   from = false
-    //   isFood = true
-    // }
+    if (hitFood) {
+      hit = dist(x, y, hitFood[0], hitFood[1])
+      lineX = hitFood[0]
+      lineY = hitFood[1]
+      isFood = true
+      from = false
+    }
 
     if (this.debug) {
       fill(360, 100, 100)
       noStroke()
       ellipse(lineX, lineY, 4)
 
-      //let result = [this.pos.x+100*cos(angle),this.pos.y+100*sin(angle)];
       if (hit) {
         stroke(200, 100, 100)
 
-        if (from) {
-          stroke(100, 100, 100)
+        if (isFood) {
+          stroke(300, 100, 100)
         }
       } else {
         stroke(40, 100, 100)
@@ -203,66 +210,33 @@ class Snake {
       line(x, y, lineX, lineY)
     }
 
-    //fill(255,0,0);
     const result = {
       x: lineX,
       y: lineY,
-      hit: hit,
-      from: from
+      hit: hit ? hit : this.whiskersize,
+      from: from,
+      isFood: isFood
     }
 
     return result
   }
 
   getInputLayer() {
-    //loadPixels(); // Nope too heavy
+    const displayedWhiskers = config.NbWhiskers
+    const inputLayer = []
 
-    let displayedWhiskers = config.nbWhiskers
-    //let inputLayer = Array.from(Array(displayedWhiskers * 4)).map(x => 0);
-    let inputLayer = _.fill(
-      new Array(displayedWhiskers * config.inputsPerWhisker),
-      0
-    )
-
-    const foodDistance = this.getFoodDistance(this.pos.x, this.pos.y)
-    const furthestDist = Math.sqrt(this.canvasWidth * this.canvasWidth + this.canvasHeight * this.canvasHeight)
-
-    let step = TWO_PI / (displayedWhiskers * 1.2)
+    const step = TWO_PI / (displayedWhiskers * 1.2)
     for (let i = 0; i < displayedWhiskers; i++) {
-      let modifier = i > displayedWhiskers / 2 ? -1 : 1
-      let angle = this.angle + step * (i % (displayedWhiskers / 2)) * modifier
-      let result = this.getDistanceToHitSensor(this.pos.x, this.pos.y, angle)
-
-      if (result.hit) {
-        let index = i * 3
-        result.hit = Math.min(result.hit, this.whiskersize)
-        inputLayer[index] = 1 - map(result.hit, 0, this.whiskersize, 0, 1)
-        inputLayer[index + 1] = result.from
-        inputLayer[index + 2] = map(foodDistance, 0, furthestDist, 0, 1)        
-      }
+      const modifier = i > displayedWhiskers / 2 ? -1 : 1
+      const angle = this.angle + step * (i % (displayedWhiskers / 2)) * modifier
+      const result = this.getDistanceToHitSensor(this.pos.x, this.pos.y, angle)
+      
+      const closestDistance = Math.min(result.hit, this.whiskersize)
+      const hitNormalised = map(closestDistance, this.whiskersize, 0, 0, 1)
+      inputLayer.push(hitNormalised, result.from, result.isFood)
     }
+
     return inputLayer
-  }
-
-  getFoodDistance(x, y) {
-    let closestFood
-    this.foodPool.food.forEach((piece) => {
-      const distance = dist(x, y, piece.x, piece.y)
-      if (!closestFood || distance < closestFood.dist) {
-        closestFood = { x: piece.x, y: piece.y, dist: distance }
-      }
-    })
-
-    if (closestFood) {
-      if (this.debug) {
-        stroke(300, 100, 100)
-        line(x, y, closestFood.x, closestFood.y)
-      }
-
-      return closestFood.dist
-    }
-
-    return 1
   }
 
   update() {
@@ -307,7 +281,7 @@ class Snake {
     if (value > 0.55) newDirection = 1
     if (value < 0.45) newDirection = 0
 
-    if (newDirection != this.direction) {
+    if (newDirection !== this.direction) {
       pool.matchResult(this, 1)
     }
 
@@ -339,7 +313,7 @@ class Snake {
 
       this.history.push(currentPos)
 
-      if (this.history.length >= config.snakeMaxLength) {
+      if (this.history.length >= config.SnakeMaxLength) {
         this.history.shift()
       }
     }
@@ -382,8 +356,8 @@ class Snake {
       this.pos.y,
       this.canvasWidth / 2,
       this.canvasHeight / 2,
-      config.centerEllipseWidth / 2,
-      config.centerEllipseHeight / 2
+      config.CenterEllipseWidth / 2,
+      config.CenterEllipseHeight / 2
     )
 
     var isOutOfBounds =
@@ -398,8 +372,7 @@ class Snake {
   }
 
   stop() {
-    //console.log('RIP',this.id);
-    pool.matchResult(this, -40)
+    pool.matchResult(this, -20)
     this.dead = true
   }
 
@@ -444,17 +417,17 @@ class Snake {
       0,
       this.pos.x,
       this.pos.y,
-      config.snakeBlurSize / 2
+      config.SnakeBlurSize / 2
     )
     gradient.addColorStop(0, `hsla(${this.hue}, 90%, 50%, 0.2)`)
     gradient.addColorStop(1, 'transparent')
     drawingContext.fillStyle = gradient
     noStroke()
-    ellipse(this.pos.x, this.pos.y, config.snakeBlurSize, config.snakeBlurSize)
+    ellipse(this.pos.x, this.pos.y, config.SnakeBlurSize, config.SnakeBlurSize)
 
     fill(this.hue, 90, 70)
-    const lastPos = this.history[this.history.length - 1]
-    ellipse(lastPos.x, lastPos.y, this.size, this.size)
+    // const lastPos = this.history[this.history.length - 1]
+    // ellipse(lastPos.x, lastPos.y, this.size, this.size)
     ellipse(this.pos.x, this.pos.y, this.size, this.size)
   }
 
@@ -468,7 +441,7 @@ class Snake {
 
   move() {
     if (this.direction != 2) {
-      this.angle += (this.direction == 1 ? 1 : -1) * this.stepAngle
+      this.angle += (this.direction === 1 ? 1 : -1) * this.stepAngle
     }
     this.pos.x += this.speed * Math.cos(this.angle)
     this.pos.y += this.speed * Math.sin(this.angle)
@@ -476,24 +449,18 @@ class Snake {
 
   eat() {
     this.foodPool.food.forEach((piece, index) => {
-      const eatsFood = collidePointCircle(this.pos.x, this.pos.y, piece.x, piece.y, this.foodPool.foodSize)
+      const eatsFood = collidePointCircle(
+        this.pos.x,
+        this.pos.y,
+        piece.x,
+        piece.y,
+        this.foodPool.foodSize
+      )
       if (eatsFood) {
         this.foodPool.eat(index)
-        pool.matchResult(this, 10)
-      } else {
-        if (this.shouldDecreaseHealth()) pool.matchResult(this, -1)
+        pool.matchResult(this, 20)
       }
     })
-  }
-
-  shouldDecreaseHealth() {
-    if (this.ticksElapsed  >= this.healthDecreasePeriod) {
-      this.ticksElapsed = 0
-      return true
-    } else {
-      this.ticksElapsed++
-      return false
-    }
   }
 }
 

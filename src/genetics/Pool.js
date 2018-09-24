@@ -6,7 +6,7 @@ import { sm } from '../game/SaveManager'
 class Pool {
   constructor() {
     this.roundTicksElapsed = 0
-    this.maxRoundTicks = config.generationLength
+    this.maxRoundTicks = config.GenerationLength
     this.generation = 0
     this.championsPerfs = []
     this.playersGenomeIndexes = []
@@ -16,10 +16,10 @@ class Pool {
   newGeneration() {
     this.roundTicksElapsed = 0    
 
-    const generationMax = Math.max.apply(Math, this.genomes.map(g => g.fitness))
+    const maxFitness = this.getMaxFitness()
     const chartsData = {
       x: pool.generation,
-      y: generationMax
+      y: maxFitness
     }
 
     this.championsPerfs.push(chartsData)
@@ -76,18 +76,29 @@ class Pool {
   mutate(genome) {
     let networkJSON = genome.network.toJSON()
     const newGenome = new Genome()
+    const mutationChance = this.calculateMutationChance()
+    console.log(mutationChance)
     networkJSON.neurons = this.mutateDataKeys(
       networkJSON.neurons,
       'bias',
-      config.MutationChance
+      mutationChance
     )
     networkJSON.connections = this.mutateDataKeys(
       networkJSON.connections,
       'weight',
-      config.MutationChance
+      mutationChance
     )
     newGenome.network = Network.fromJSON(networkJSON)
     return newGenome
+  }
+
+  getMaxFitness() {
+    return Math.max.apply(Math, this.genomes.map(g => g.fitness))
+  }
+
+  calculateMutationChance() {
+    const maxFitness = this.getMaxFitness()
+    return maxFitness > 20 ? Math.min((1 / Math.sqrt(maxFitness)), config.MutationChance) : config.MutationChance
   }
 
   // Given an array of object with key and mutationChance

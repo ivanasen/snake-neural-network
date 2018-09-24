@@ -9,11 +9,9 @@ const perfChart = () => {
       datasets: [
         {
           fill: false,
-          // xAxisID: 'Generations',
-          // yAxisID: 'Fitness',
-          borderColor: config.chartSecondaryColor,
-          pointBorderColor: config.chartSecondaryColor,
-          pointBackgroundColor: config.chartMainColor,
+          borderColor: config.ChartSecondaryColor,
+          pointBorderColor: config.ChartSecondaryColor,
+          pointBackgroundColor: config.ChartMainColor,
           label: 'Best Fitness per Generation',
           data: []
         }
@@ -48,7 +46,7 @@ const ageChart = () => {
       datasets: [
         {
           label: 'Age of the top ' + baseArrayPop.length + ' genomes',
-          backgroundColor: baseArrayPop.map(() => config.chartMainColor),
+          backgroundColor: baseArrayPop.map(() => config.ChartMainColor),
           data: baseArrayPop.map(() => 0)
         }
       ]

@@ -4,22 +4,21 @@ import config from '../config.json'
 import charts from './charts'
 import { pool } from '../genetics/Pool'
 import FoodPool from './FoodPool'
-import { debug } from 'util';
 import Snake from './Snake'
 
 class Game {
   constructor() {
-    this.simulationSpeed = config.simulationSpeed
+    this.simulationSpeed = config.SimulationSpeed
     this.snakesCount = config.Population
     this.snakesList = []
-    this.debug = false
+    this.debug = config.Debug
     this.showDraw = 1
     this.showSnakesSensors = 0
     this.humanControlled = 0
     this.frameCount = 0
     this.width = window.innerWidth
     this.height = window.innerHeight
-    this.shouldEvolve = config.shouldEvolve    
+    this.shouldEvolve = config.ShouldEvolve
     this.setupChart()
   }
 
@@ -33,7 +32,7 @@ class Game {
   setup() {
     this.snakesList = []
     const canvas = createCanvas(this.width, this.height)
-    this.foodPool = new FoodPool(config.foodAmount, this.width, this.height)
+    this.foodPool = new FoodPool(config.FoodAmount, this.width, this.height)
     canvas.parent('sketch-holder')
     colorMode(HSB)
   }
@@ -66,7 +65,7 @@ class Game {
   }
 
   clear() {
-    this.debug ? background(0, 0, 0) : background(360, 100, 0, 0.03)    
+    this.debug ? background(0, 0, 0) : background(360, 100, 0, 0.03)
   }
 
   checkDead() {
@@ -86,11 +85,10 @@ class Game {
   }
 
   handleNextTick() {
-    if (pool.roundTicksElapsed >= pool.maxRoundTicks && this.shouldEvolve) {
+    if (++pool.roundTicksElapsed >= pool.maxRoundTicks && this.shouldEvolve) {
       pool.newGeneration()
     }
 
-    pool.roundTicksElapsed++
     if (pool.roundTicksElapsed % 2 == 0) {
       this.snakesList.forEach(snake => {
         !snake.dead && snake.getInputsAndAssignDir()

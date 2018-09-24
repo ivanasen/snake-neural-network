@@ -166,15 +166,15 @@ export const getRandomPosition = (width, height) => {
   const x = Math.random() * width
   let y
   if (
-    x > (width - config.centerEllipseWidth) / 2 &&
-    x < (width + config.centerEllipseWidth) / 2
+    x > (width - config.CenterEllipseWidth) / 2 &&
+    x < (width + config.CenterEllipseWidth) / 2
   ) {
     y =
       Math.random() > 0.5
-        ? (Math.random() * (height - config.centerEllipseHeight)) /
+        ? (Math.random() * (height - config.CenterEllipseHeight)) /
             2 +
-          (height + config.centerEllipseHeight) / 2
-        : Math.random() * ((height - config.centerEllipseHeight) / 2)
+          (height + config.CenterEllipseHeight) / 2
+        : Math.random() * ((height - config.CenterEllipseHeight) / 2)
   } else {
     y = Math.random() * height
   }

@@ -7,7 +7,10 @@ class FoodPool {
     this.amount = amount
     this.canvasWidth = canvasWidth
     this.canvasHeight = canvasHeight
-    this.foodSize = config.foodSize
+    this.foodSize = config.FoodSize
+    this.pulseInterval = config.FoodPulseInterval
+    this.pulseTicks = this.pulseInterval
+    this.hue = config.FoodHue
     this.food = this.generateFood()
   }
 
@@ -32,46 +35,30 @@ class FoodPool {
   }
 
   drawFoodPiece(x, y, size) {
-    const gradient = drawingContext.createRadialGradient(
-      x,
-      y,
-      0,
-      x,
-      y,
-      size / 2
-    )
-    gradient.addColorStop(0, `hsla(200, 90%, 70%, 0.1)`)
-    gradient.addColorStop(1, 'transparent')
-    drawingContext.fillStyle = gradient
+    if (++this.pulseTicks > this.pulseInterval) {      
+      const gradient = drawingContext.createRadialGradient(
+        x,
+        y,
+        0,
+        x,
+        y,
+        size / 2
+      )
+      gradient.addColorStop(0, `hsla(${this.hue}, 90%, 70%, 0.2)`)
+      gradient.addColorStop(1, `hsla(0, 0%, 0%, 0.0)`)
+      drawingContext.fillStyle = gradient
+      noStroke()
+      ellipse(x, y, size, size)
+
+      if (this.pulseTicks > 2 * this.pulseInterval) {
+        this.pulseTicks = 0
+      }
+    }
+    
     noStroke()
-    ellipse(x, y, size, size)
-
-    fill(200, 40, 70)
-    ellipse(x, y, size / 3, size / 3)
+    fill(this.hue, 40, 70)
+    ellipse(x, y, size / 3.5, size / 3.5)
   }
-
-  // showFood() {
-  //   if (this.foodPulseCounter++ > this.foodPulseInterval) {
-  //     const gradient = drawingContext.createRadialGradient(
-  //       this.pos.x,
-  //       this.pos.y,
-  //       0,
-  //       this.pos.x,
-  //       this.pos.y,
-  //       config.foodSize * 0.75
-  //     )
-  //     gradient.addColorStop(0, `hsla(${this.hue}, 90%, 50%, 0.2)`)
-  //     gradient.addColorStop(1, 'transparent')
-  //     drawingContext.fillStyle = gradient
-  //     noStroke()
-  //     ellipse(this.food.x, this.food.y, this.foodSize * 1.5, this.foodSize * 1.5)
-  
-  //     fill(this.hue, 90, 70)
-  //     ellipse(this.food.x, this.food.y, this.foodSize, this.foodSize)
-
-  //     this.foodPulseCounter = 0
-  //   }
-  // }
 }
 
 export default FoodPool

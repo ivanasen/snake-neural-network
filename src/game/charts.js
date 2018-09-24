@@ -8,16 +8,17 @@ const perfChart = () => {
     data: {
       datasets: [
         {
-          fill: false,
-          borderColor: config.ChartSecondaryColor,
-          pointBorderColor: config.ChartSecondaryColor,
-          pointBackgroundColor: config.ChartMainColor,
+          borderColor: config.ChartMainColor,
+          borderWidth: 1.5,
+          pointRadius: 0,
+          backgroundColor: config.ChartFillColor,
           label: 'Best Fitness per Generation',
           data: []
         }
       ]
     },
     options: {
+      backgroundColor: config.ChartSecondaryColor,
       scales: {
         xAxes: [
           {

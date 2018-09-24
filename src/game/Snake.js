@@ -390,7 +390,6 @@ class Snake {
     //     ellipse(this.pos.x, this.pos.y, this.size, this.size);
     // } else {
     // if (this.debug) {
-
     if (this.debug) {
       this.showHistory()
     } else {

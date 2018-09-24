@@ -3,6 +3,7 @@ import config from '../config.json'
 import Genome from './Genome'
 import { Network } from 'synaptic'
 import { sm } from '../game/SaveManager'
+
 class Pool {
   constructor() {
     this.roundTicksElapsed = 0
@@ -14,11 +15,11 @@ class Pool {
   }
 
   newGeneration() {
-    this.roundTicksElapsed = 0    
+    this.roundTicksElapsed = 0
 
     const maxFitness = this.getMaxFitness()
     const chartsData = {
-      x: pool.generation,
+      x: this.generation,
       y: maxFitness
     }
 
@@ -217,77 +218,6 @@ class Pool {
     const genome = this.getGenomeOfSnake(player.id)
     genome.addMatch(score)
   }
-
-  // matchResult(players) {
-  //   players.forEach(player => {
-  //     const genome = this.getGenomeOfSnake(player.id);
-  //     genome.addMatch({
-  //       score: ~~(10 + Math.log10(player.diedAt))
-  //     });
-  //   });
-  // };
-
-  // Receives both Snakes and id of the
-  // matchResult({winner, loser}) {
-  //   // Winner adds loser to its matches
-  //   const winnerGenome = this.getGenomeOfSnake(winner.id);
-  //   const loserGenome = this.getGenomeOfSnake(loser.id);
-  //   winnerGenome.addMatch(
-  //     {
-  //       opponent: this.getIndexOfSnakeGenome(loser.id),
-  //       score: ~~(10 + Math.log10(winner.diedAt)),
-  //       winner:true,
-  //     });
-  //   loserGenome.addMatch(
-  //     {
-  //       opponent: this.getIndexOfSnakeGenome(winner.id),
-  //       score: ~~(Math.log10(loser.diedAt)),
-  //       winner:false,
-  //     });
-  // }
-
-  // pickPlayers() {
-  //   let foundP1 = false;
-  //   let foundP2 = false;
-
-  //   foundP1 = this.findOpponent(false, this.genomes)
-
-  //   if (foundP1 === false) {
-  //     this.p1GenomeIndex = 0;
-  //     this.p2GenomeIndex = 1;
-  //     this.newGeneration();
-  //   } else {
-  //     foundP2 = this.findOpponent(foundP1, this.genomes);
-  //     if (!foundP2) throw new Error('Could not find opponent');
-  //     this.p1GenomeIndex = foundP1;
-  //     this.p2GenomeIndex = foundP2;
-  //   }
-  // }
-
-  // findOpponent(specificOpponent = false, genomesList) {
-  //   const { Population } = config;
-  //   const matchesToplay = Population - 1;
-
-  //   for (let i = 0,l = genomesList.length; i<l;i++) {
-  //     const candidate = genomesList[i];
-  //     const matches = candidate.matches.length;
-  //     if (matches < matchesToplay){
-  //       if (specificOpponent === false) {
-  //         // Return the first index that didn't do all his matches
-  //         return i;
-  //       } else {
-  //         // Is it not me?
-  //         if (specificOpponent !== i) {
-  //           // Does this candidate work against specificOpponent?
-  //           const alreadyPlayed = candidate.matches.some(m => m.opponent == specificOpponent);
-  //           if (!alreadyPlayed) return i;
-  //         }
-
-  //       }
-  //     }
-  //   }
-  //   return false;
-  // }
 }
 
 export const pool = new Pool()

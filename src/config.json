@@ -22,6 +22,6 @@
   "CenterEllipseHeight": 300,
   "ChartMainColor": "hsl(210, 90%, 70%)",
   "ChartSecondaryColor": "hsl(210, 40%, 40%)",
-  "ShouldEvolve": false,
+  "ShouldEvolve": true,
   "Debug": false
 }

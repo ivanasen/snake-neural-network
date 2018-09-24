@@ -111,33 +111,29 @@ class Snake {
 
     let shortestDistance = this.whiskersize
     //First Checking borders
-    let hitBorders =
-      HIT_BORDERS.map(border => {
-        const hitBorder = collideLineLine(
-          border[0].x,
-          border[0].y,
-          border[1].x,
-          border[1].y,
-          x,
-          y,
-          lineX,
-          lineY,
-          true
-        )
+    HIT_BORDERS.forEach(border => {
+      const hitBorder = collideLineLine(
+        border[0].x,
+        border[0].y,
+        border[1].x,
+        border[1].y,
+        x,
+        y,
+        lineX,
+        lineY,
+        true
+      )
 
-        return hitBorder.x === false && hitBorder.y === false
-          ? false
-          : [hitBorder.x, hitBorder.y]
-      }).find(Boolean) || false
-
-    if (hitBorders) {
-      hit = dist(this.pos.x, this.pos.y, hitBorders[0], hitBorders[1])
-      shortestDistance = hit
-      lineX = hitBorders[0]
-      lineY = hitBorders[1]
-      isFood = false
-      from = true
-    }
+      const borderDist = dist(this.pos.x, this.pos.y, hitBorder.x, hitBorder.y)
+      if (borderDist < shortestDistance) {
+        shortestDistance = borderDist
+        hit = borderDist
+        lineX = hitBorder.x
+        lineY = hitBorder.y
+        isFood = false
+        from = true
+      }
+    })
 
     let potentialColliders = []
     //Loop through circles and check if line intersects
@@ -180,9 +176,20 @@ class Snake {
       }
     }
 
-    const hitFood = this.foodPool.food.map((piece) =>
-      collideLineCircle(x, y, lineX, lineY, piece.x, piece.y, this.foodPool.foodSize)
-    ).find(Boolean) || false
+    const hitFood =
+      this.foodPool.food
+        .map(piece =>
+          collideLineCircle(
+            x,
+            y,
+            lineX,
+            lineY,
+            piece.x,
+            piece.y,
+            this.foodPool.foodSize
+          )
+        )
+        .find(Boolean) || false
 
     if (hitFood) {
       hit = dist(x, y, hitFood[0], hitFood[1])
@@ -230,7 +237,7 @@ class Snake {
       const modifier = i > displayedWhiskers / 2 ? -1 : 1
       const angle = this.angle + step * (i % (displayedWhiskers / 2)) * modifier
       const result = this.getDistanceToHitSensor(this.pos.x, this.pos.y, angle)
-      
+
       const closestDistance = Math.min(result.hit, this.whiskersize)
       const hitNormalised = map(closestDistance, this.whiskersize, 0, 0, 1)
       inputLayer.push(hitNormalised, result.from, result.isFood)
@@ -406,7 +413,7 @@ class Snake {
     stroke(this.hue, 90, 70)
     fill(this.hue, 90, 70, 0.3)
     this.history.forEach(pos => ellipse(pos.x, pos.y, this.size, this.size))
-    
+
     ellipse(this.pos.x, this.pos.y, this.size, this.size)
   }
 

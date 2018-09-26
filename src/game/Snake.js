@@ -5,7 +5,7 @@ import _ from 'lodash'
 import {
   collideLineLine,
   collideLineCircle,
-  collidePointEllipse,
+  collidePointRect,
   distNotSquared,
   collidePointCircle,
   getRandomPosition
@@ -124,14 +124,21 @@ class Snake {
         true
       )
 
-      const borderDist = dist(this.pos.x, this.pos.y, hitBorder.x, hitBorder.y)
-      if (borderDist < shortestDistance) {
-        shortestDistance = borderDist
-        hit = borderDist
-        lineX = hitBorder.x
-        lineY = hitBorder.y
-        isFood = false
-        from = true
+      if (hitBorder.x !== false && hitBorder.y !== false) {
+        const borderDist = dist(
+          this.pos.x,
+          this.pos.y,
+          hitBorder.x,
+          hitBorder.y
+        )
+        if (borderDist < shortestDistance) {
+          shortestDistance = borderDist
+          hit = borderDist
+          lineX = hitBorder.x
+          lineY = hitBorder.y
+          isFood = false
+          from = true
+        }
       }
     })
 
@@ -208,7 +215,7 @@ class Snake {
         stroke(200, 100, 100)
 
         if (isFood) {
-          stroke(300, 100, 100)
+          stroke(80, 100, 100)
         }
       } else {
         stroke(40, 100, 100)
@@ -289,7 +296,7 @@ class Snake {
     if (value < 0.45) newDirection = 0
 
     if (newDirection !== this.direction) {
-      pool.matchResult(this, 1)
+      pool.matchResult(this, config.ChangeDirectionReward)
     }
 
     this.direction = newDirection
@@ -358,13 +365,13 @@ class Snake {
       return colliding
     })
 
-    var collidesWithEllipse = collidePointEllipse(
+    var collidesWithRect = collidePointRect(
       this.pos.x,
       this.pos.y,
-      this.canvasWidth / 2,
-      this.canvasHeight / 2,
-      config.CenterEllipseWidth / 2,
-      config.CenterEllipseHeight / 2
+      (this.canvasWidth - config.CenterEllipseWidth) / 2,
+      (this.canvasHeight - config.CenterEllipseHeight) / 2,
+      config.CenterEllipseWidth,
+      config.CenterEllipseHeight
     )
 
     var isOutOfBounds =
@@ -372,14 +379,14 @@ class Snake {
       this.pos.x < 0 ||
       this.pos.y > this.canvasHeight ||
       this.pos.y < 0
-    if (isOutOfBounds || collidesWithEllipse) {
+    if (isOutOfBounds || collidesWithRect) {
       this.stop()
     }
-    return isColliding || isOutOfBounds || collidesWithEllipse
+    return isColliding || isOutOfBounds || collidesWithRect
   }
 
   stop() {
-    pool.matchResult(this, -20)
+    pool.matchResult(this, config.DieReward)
     this.dead = true
   }
 
@@ -432,8 +439,6 @@ class Snake {
     ellipse(this.pos.x, this.pos.y, config.SnakeBlurSize, config.SnakeBlurSize)
 
     fill(this.hue, 90, 70)
-    // const lastPos = this.history[this.history.length - 1]
-    // ellipse(lastPos.x, lastPos.y, this.size, this.size)
     ellipse(this.pos.x, this.pos.y, this.size, this.size)
   }
 
@@ -464,7 +469,7 @@ class Snake {
       )
       if (eatsFood) {
         this.foodPool.eat(index)
-        pool.matchResult(this, 20)
+        pool.matchResult(this, config.EatFoodReward)
       }
     })
   }

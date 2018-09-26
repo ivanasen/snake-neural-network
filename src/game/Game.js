@@ -25,7 +25,7 @@ class Game {
   setupChart() {
     document.addEventListener('DOMContentLoaded', e => {
       window.chart = charts.perfChart()
-      window.ageChart = charts.ageChart()
+      // window.ageChart = charts.ageChart()
     })
   }
 

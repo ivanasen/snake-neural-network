@@ -99,7 +99,7 @@ class Pool {
 
   calculateMutationChance() {
     const maxFitness = this.getMaxFitness()
-    return maxFitness > 20 ? Math.min((1 / Math.sqrt(maxFitness)), config.MutationChance) : config.MutationChance
+    return maxFitness > 100 ? Math.min((1 / Math.pow(maxFitness, 0.35)), config.MutationChance) : config.MutationChance
   }
 
   // Given an array of object with key and mutationChance
@@ -118,9 +118,9 @@ class Pool {
     chart.data.datasets[0].data = this.championsPerfs.slice()
     chart.update()
     const ageStats = this.genomes.map(g => g.age)
-    ageStats.length = ~~(config.Population * config.KeepAlivePercent)
-    ageChart.data.datasets[0].data = ageStats
-    ageChart.update()
+    // ageStats.length = ~~(config.Population * config.KeepAlivePercent)
+    // ageChart.data.datasets[0].data = ageStats
+    // ageChart.update()
   }
 
   getRandomGenome(list) {

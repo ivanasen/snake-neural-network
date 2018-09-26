@@ -42,13 +42,13 @@ class FoodPool {
         0,
         x,
         y,
-        size / 2
+        size / 1.5
       )
       gradient.addColorStop(0, `hsla(${this.hue}, 90%, 70%, 0.2)`)
       gradient.addColorStop(1, `hsla(0, 0%, 0%, 0.0)`)
       drawingContext.fillStyle = gradient
       noStroke()
-      ellipse(x, y, size, size)
+      ellipse(x, y, size * 1.5, size * 1.5)
 
       if (this.pulseTicks > 2 * this.pulseInterval) {
         this.pulseTicks = 0
@@ -57,7 +57,7 @@ class FoodPool {
     
     noStroke()
     fill(this.hue, 40, 70)
-    ellipse(x, y, size / 3.5, size / 3.5)
+    ellipse(x, y, size / 2, size / 2)
   }
 }
 

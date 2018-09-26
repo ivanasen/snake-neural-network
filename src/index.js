@@ -5,6 +5,7 @@ import { pool } from 'genetics/Pool'
 import { sm } from 'game/SaveManager'
 import Game from 'game/Game'
 import 'game/canvas-debug'
+import './chartButtons'
 
 pool.init()
 
@@ -33,19 +34,4 @@ window.draw = () => {
 window.reset = () => {
   Game.reset()
 }
-
-const showInfoBtn = document.getElementById('show-info-btn')
-const hideInfoBtn = document.getElementById('hide-info-btn')
-const infoHolder = document.getElementById('info-holder')
-
-showInfoBtn.addEventListener('click', () => {
-  showInfoBtn.classList.add('invisible')
-  infoHolder.classList.remove('invisible')
-})
-
-hideInfoBtn.addEventListener('click', () => {
-  showInfoBtn.classList.remove('invisible')
-  infoHolder.classList.add('invisible')
-})
-
 //setTimeout(reset,500);

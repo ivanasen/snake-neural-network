@@ -70,10 +70,6 @@ app.post('/savestate', (req, res) => {
   res.send({ status: true })
 })
 
-app.get('/dot.png', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/dot.png'))
-})
-
 app.listen(app.get('port'), _ => {
   console.log(`App Running on ${app.get('port')}`)
 })

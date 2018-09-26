@@ -171,8 +171,7 @@ export const getRandomPosition = (width, height) => {
   ) {
     y =
       Math.random() > 0.5
-        ? (Math.random() * (height - config.CenterEllipseHeight)) /
-            2 +
+        ? (Math.random() * (height - config.CenterEllipseHeight)) / 2 +
           (height + config.CenterEllipseHeight) / 2
         : Math.random() * ((height - config.CenterEllipseHeight) / 2)
   } else {
@@ -180,4 +179,17 @@ export const getRandomPosition = (width, height) => {
   }
 
   return createVector(x, y)
+}
+
+export const collidePointRect = (pointX, pointY, x, y, xW, yW) => {
+  if (
+    pointX >= x && // right of the left edge AND
+    pointX <= x + xW && // left of the right edge AND
+    pointY >= y && // below the top AND
+    pointY <= y + yW
+  ) {
+    // above the bottom
+    return true
+  }
+  return false
 }

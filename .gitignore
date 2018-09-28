@@ -1,4 +1,5 @@
 temp/
+dist/
 public/savedStates
 .DS_Store
 node_modules

@@ -1,11 +1,15 @@
 //import 'game/utils';
-import 'materialize-loader'
 import 'global.scss'
 import { pool } from 'genetics/Pool'
-import { sm } from 'game/SaveManager'
+import { sm } from 'game/StaticSaveManager'
 import Game from 'game/Game'
 import 'game/canvas-debug'
+import './animationInnerContent'
 import './chartButtons'
+
+const width = $('#snakes-animation-holder').width()
+const height = $('#snakes-animation-holder').height()
+const game = new Game(width, height)
 
 pool.init()
 
@@ -14,24 +18,21 @@ sm.getLoadState(() => {
     return { x: c.generation, y: c.fitness }
   })
   chart.update()
-  reset()
 })
 
 window.pool = pool
 window.Game = Game
 // Called one time at load
 window.setup = () => {
-  Game.setup()
-  console.log(Game)
+  game.setup()
 }
 
 // Called on every frame
 window.draw = () => {
-  Game.draw()
+  game.draw()
 }
 
 // Reset the Canvas
 window.reset = () => {
-  Game.reset()
+  game.reset()
 }
-//setTimeout(reset,500);

@@ -1,5 +1,4 @@
 import config from '../config.json'
-import Game from 'game/Game'
 import { pool } from '../genetics/Pool'
 import _ from 'lodash'
 import {
@@ -259,7 +258,7 @@ class Snake {
     this.store()
     this.move()
     this.eat()
-    if (Game.showDraw) this.show()
+    this.show()
     this.checkCollisions()
   }
 

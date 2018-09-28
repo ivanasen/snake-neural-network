@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import config from '../config.json'
 import Genome from './Genome'
 import { Network } from 'synaptic'
-import { sm } from '../game/SaveManager'
+import { sm } from '../game/StaticSaveManager'
 
 class Pool {
   constructor() {

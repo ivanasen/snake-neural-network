@@ -1,4 +1,4 @@
-body {
+body {  
   min-height: 100vh;
   font-family: Helvetica;
   font-size: 13px;
@@ -22,13 +22,21 @@ body {
   padding-top: 10px;
 }
 
-#sketch-holder {
+#snakes-animation-holder {
   align-items: center;
   justify-content: center;
   text-align: center;
   min-width: 400px;
   overflow: hidden;
-  cursor: pointer;
+  height: 100vh;
+  width: 100vw;
+  background-color: black;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+
+  &.ready {
+    opacity: 1;
+  }
 }
 
 #info-holder {

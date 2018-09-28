@@ -7,17 +7,16 @@ import FoodPool from './FoodPool'
 import Snake from './Snake'
 
 class Game {
-  constructor() {
+  constructor(width, height) {
     this.simulationSpeed = config.SimulationSpeed
     this.snakesCount = config.Population
     this.snakesList = []
     this.debug = config.Debug
-    this.showDraw = 1
     this.showSnakesSensors = 0
     this.humanControlled = 0
     this.frameCount = 0
-    this.width = window.innerWidth
-    this.height = window.innerHeight
+    this.width = width
+    this.height = height
     this.shouldEvolve = config.ShouldEvolve
     this.setupChart()
   }
@@ -25,7 +24,6 @@ class Game {
   setupChart() {
     document.addEventListener('DOMContentLoaded', e => {
       window.chart = charts.perfChart()
-      // window.ageChart = charts.ageChart()
     })
   }
 
@@ -33,8 +31,10 @@ class Game {
     this.snakesList = []
     const canvas = createCanvas(this.width, this.height)
     this.foodPool = new FoodPool(config.FoodAmount, this.width, this.height)
-    canvas.parent('sketch-holder')
+    canvas.parent('snakes-animation-holder')
     colorMode(HSB)
+
+    this.reset()
   }
 
   reset() {
@@ -50,6 +50,8 @@ class Game {
     if (this.showSnakesSensors) {
       this.snakesList.forEach(snake => Snake.setDebug())
     }
+
+    $('#snakes-animation-holder').addClass('ready')
   }
 
   draw() {
@@ -99,4 +101,4 @@ class Game {
   }
 }
 
-export default new Game()
+export default Game

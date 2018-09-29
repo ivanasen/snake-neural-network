@@ -1,14 +1,17 @@
+import _ from 'lodash'
+
 import config from '../config.json'
 import { pool } from '../genetics/Pool'
-import _ from 'lodash'
 import {
-  collideLineLine,
-  collideLineCircle,
+  // collideLineCircle,
+  // collideLineLine,
+  // collidePointLine,
   collidePointRect,
   distNotSquared,
   collidePointCircle,
   getRandomPosition
 } from '../util'
+import workerPool from '../workerPool'
 
 const topLeft = {
   x: 0,
@@ -96,21 +99,33 @@ class Snake {
     this.foodPool = foodPool
   }
 
-  getDistanceToHitSensor(x, y, a) {
+  getDistanceToHitSensor(
+    x,
+    y,
+    a,
+    whiskerSize,
+    snakesList,
+    id,
+    size,
+    food,
+    foodSize,
+    borders
+  ) {
     //Debug;
     let minDistance = 3
     x += minDistance * Math.cos(a)
     y += minDistance * Math.sin(a)
 
-    let lineX = x + this.whiskersize * Math.cos(a)
-    let lineY = y + this.whiskersize * Math.sin(a)
+    let lineX = x + whiskerSize * Math.cos(a)
+    let lineY = y + whiskerSize * Math.sin(a)
     let hit = false // Is the whisker triggered ?
     let from = false // Is it me, wall or enemy ?
     let isFood = false // Is it food ?
 
-    let shortestDistance = this.whiskersize
-    //First Checking borders
-    HIT_BORDERS.forEach(border => {
+    let shortestDistance = whiskerSize
+
+    //Check borders
+    borders.forEach(border => {
       const hitBorder = collideLineLine(
         border[0].x,
         border[0].y,
@@ -124,12 +139,7 @@ class Snake {
       )
 
       if (hitBorder.x !== false && hitBorder.y !== false) {
-        const borderDist = dist(
-          x,
-          y,
-          hitBorder.x,
-          hitBorder.y
-        )
+        const borderDist = dist(x, y, hitBorder.x, hitBorder.y)
         if (borderDist < shortestDistance) {
           shortestDistance = borderDist
           hit = borderDist
@@ -141,11 +151,11 @@ class Snake {
       }
     })
 
-    let potentialColliders = []
     //Loop through circles and check if line intersects
-    for (let i = 0; i < this.snakesList.length; i++) {
-      let c = this.snakesList[i]
-      if (i === this.id) {
+    let potentialColliders = []
+    for (let i = 0; i < snakesList.length; i++) {
+      let c = snakesList[i]
+      if (i === id) {
         potentialColliders = potentialColliders.concat(c.history)
       } else {
         potentialColliders = potentialColliders.concat(c.history, [
@@ -158,17 +168,8 @@ class Snake {
     for (let i = 0; i < potentialColliders.length; i++) {
       let p = potentialColliders[i]
       //if further than this.whiskersizepx discard
-      if (distNotSquared(x, y, p.x, p.y) > this.whiskersize * this.whiskersize)
-        continue
-      let collided = collideLineCircle(
-        x,
-        y,
-        lineX,
-        lineY,
-        p.x,
-        p.y,
-        this.size * 2
-      )
+      if (distNotSquared(x, y, p.x, p.y) > whiskerSize * whiskerSize) continue
+      let collided = collideLineCircle(x, y, lineX, lineY, p.x, p.y, size * 2)
       if (collided) {
         let distance = dist(x, y, collided[0], collided[1])
         if (distance < shortestDistance) {
@@ -182,18 +183,11 @@ class Snake {
       }
     }
 
+    // Check food
     const hitFood =
-      this.foodPool.food
+      food
         .map(piece =>
-          collideLineCircle(
-            x,
-            y,
-            lineX,
-            lineY,
-            piece.x,
-            piece.y,
-            this.foodPool.foodSize
-          )
+          collideLineCircle(x, y, lineX, lineY, piece.x, piece.y, foodSize)
         )
         .find(Boolean) || false
 
@@ -205,58 +199,116 @@ class Snake {
       from = false
     }
 
-    if (this.debug) {
-      fill(360, 100, 100)
-      noStroke()
-      ellipse(lineX, lineY, 4)
-
-      if (hit) {
-        stroke(200, 100, 100)
-
-        if (isFood) {
-          stroke(80, 100, 100)
-        }
-      } else {
-        stroke(40, 100, 100)
-      }
-
-      line(x, y, lineX, lineY)
-    }
-
-    const result = {
+    return {
       x: lineX,
       y: lineY,
-      hit: hit ? hit : this.whiskersize,
+      hit: hit ? hit : whiskerSize,
       from: from,
       isFood: isFood
     }
-
-    return result
   }
 
-  getInputLayer() {
+  getInputLayer({
+    displayedWhiskers,
+    x,
+    y,
+    whiskerSize,
+    snakesList,
+    id,
+    size,
+    food,
+    foodSize,
+    borders
+  }, done) {
+    const inputLayer = []
+
+    const step = (Math.PI * 2) / (displayedWhiskers * 1.2)
+    
+
+    for (let i = 0; i < displayedWhiskers; i++) {
+      const modifier = i > displayedWhiskers / 2 ? -1 : 1
+      const angle = angle + step * (i % (displayedWhiskers / 2)) * modifier
+
+      const result = getDistanceToHitSensor(
+        x,
+        y,
+        angle,
+        whiskerSize,
+        snakesList,
+        id,
+        size,
+        food,
+        foodSize,
+        borders
+      )
+
+      const closestDistance = Math.min(result.hit, whiskerSize)
+      const hitNormalised = map(closestDistance, whiskerSize, 0, 0, 1)
+      inputLayer.push(hitNormalised, result.from, result.isFood)
+    }
+
+    done(inputLayer)
+  }
+
+  getInputLayerAsync() {
     return new Promise((resolve, reject) => {
+      const whiskerSize = this.whiskersize
+    
+      const snakesList = this.snakesList.map(snake => ({
+        history: snake.history.map(item => ({ x: item.x, y: item.y })),
+        pos: { x: snake.pos.x, y: snake.pos.y }
+      }))
+      const id = this.id
+      const size = this.size
+      const food = this.foodPool.food.map(food => ({ x: food.x, y: food.y }))
+      const foodSize = this.foodPool.foodSize
+    
       const displayedWhiskers = config.NbWhiskers
-      const inputLayer = []
-
-      const step = TWO_PI / (displayedWhiskers * 1.2)
-      for (let i = 0; i < displayedWhiskers; i++) {
-        const modifier = i > displayedWhiskers / 2 ? -1 : 1
-        const angle =
-          this.angle + step * (i % (displayedWhiskers / 2)) * modifier
-        const result = this.getDistanceToHitSensor(
-          this.pos.x,
-          this.pos.y,
-          angle
-        )
-
-        const closestDistance = Math.min(result.hit, this.whiskersize)
-        const hitNormalised = map(closestDistance, this.whiskersize, 0, 0, 1)
-        inputLayer.push(hitNormalised, result.from, result.isFood)
-      }
-
-      resolve(inputLayer)
+    
+      workerPool
+        .send({
+          displayedWhiskers,
+          x: this.pos.x,
+          y: this.pos.y,
+          whiskerSize,
+          snakesList,
+          id,
+          size,
+          food,
+          foodSize,
+          borders: HIT_BORDERS,
+          angle: this.angle
+        })
+        .on('done', function(response) {
+          resolve(response)
+        })
+        .on('error', function(error) {
+          console.error('Worker errored:', error)
+          resolve(error)
+        })
+        .on('exit', function() {
+          console.log('Worker has been terminated.')
+          resolve('sef')
+        })      
     })
+  }
+
+  drawWhisker(x, y, x1, y1, isFood, hit) {
+    fill(360, 100, 100)
+    noStroke()
+    ellipse(x1, y1, 4)
+
+    if (hit) {
+      stroke(200, 100, 100)
+
+      if (isFood) {
+        stroke(80, 100, 100)
+      }
+    } else {
+      stroke(40, 100, 100)
+    }
+
+    line(x, y, x1, y1)
   }
 
   update() {
@@ -273,22 +325,37 @@ class Snake {
   updateSpeed = 2
 
   getInputsAndAssignDir() {
-    //return; // REMOVE ME!!
     if (this.currentUpdate >= this.updateSpeed) {
       this.age++
       this.currentUpdate = 0
-      this.getInputLayer().then(inputs => {
-        this.assignDir(inputs)
+      this.getInputLayerAsync().then(inputs => {
         this.lastInputLayer = inputs
+
+        const pressedKey = pool.evaluateGenome(this.lastInputLayer, this.id)
+        // let controller = Math.random();
+        //console.log(inputs,controller);
+        this.setPressedKey(pressedKey)
       })
     } else {
       this.currentUpdate++
     }
-  }
 
-  assignDir(inputLayer) {
-    let controller = pool.evaluateGenome(inputLayer, this.id)
-    this.setPressedKey(controller)
+    //return; // REMOVE ME!!
+    // if (this.currentUpdate >= this.updateSpeed) {
+    //   this.age++
+    //   this.currentUpdate = 0
+    //   const inputs = this.getInputLayer()
+
+    //   this.lastInputLayer = inputs
+    // } else {
+    //   this.currentUpdate++
+    // }
+
+    // //Add sensorsData to Inputs?
+    // const pressedKey = pool.evaluateGenome(this.lastInputLayer, this.id)
+    // // let controller = Math.random();
+    // //console.log(inputs,controller);
+    // this.setPressedKey(pressedKey)
   }
 
   // Outputs is an array with 3 elements [a,b,c]

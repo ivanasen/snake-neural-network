@@ -4,7 +4,7 @@ import config from '../config.json'
 import charts from './charts'
 import { pool } from '../genetics/Pool'
 import FoodPool from './FoodPool'
-import Snake from './Snake'
+import Snake from './SnakeWorker'
 
 class Game {
   constructor(width, height) {
@@ -70,29 +70,12 @@ class Game {
 
     for (let i = 0; i < this.simulationSpeed; i++) {
       this.foodPool.draw()
-      this.checkDead()
       this.handleNextTick()
     }
   }
 
   clear() {
     this.debug ? background(0, 0, 0) : background(360, 100, 0, 0.03)
-  }
-
-  checkDead() {
-    for (let i = 0; i < this.snakesList.length; i++) {
-      const snake = this.snakesList[i]
-      if (snake.dead) {
-        this.snakesList[i] = new Snake(
-          this.snakesList,
-          i,
-          this.width,
-          this.height,
-          this.foodPool,
-          this.debug
-        )
-      }
-    }
   }
 
   handleNextTick() {

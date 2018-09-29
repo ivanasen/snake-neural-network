@@ -13,6 +13,7 @@ const publicPath = `/dist`
 export default merge(baseConfig, {
   devtool: '#source-map',
   entry: [path.join(__dirname, 'src/index.js')],
+  target: 'node',
   output: {
     publicPath
   },

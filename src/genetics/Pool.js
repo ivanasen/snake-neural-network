@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import config from '../config.json'
 import Genome from './Genome'
 import { Network } from 'synaptic'
-import { sm } from '../game/StaticSaveManager'
+// import { sm } from '../game/StaticSaveManager'
 
 class Pool {
   constructor() {
@@ -25,8 +25,6 @@ class Pool {
 
     this.championsPerfs.push(chartsData)
     this.hydrateChart()
-
-    console.log(this.genomes.map(g => g.fitness))
 
     // Kill worst genomes
     this.genomes = this.selectBestGenomes(
@@ -78,7 +76,6 @@ class Pool {
     let networkJSON = genome.network.toJSON()
     const newGenome = new Genome()
     const mutationChance = this.calculateMutationChance()
-    console.log(mutationChance)
     networkJSON.neurons = this.mutateDataKeys(
       networkJSON.neurons,
       'bias',
@@ -202,20 +199,8 @@ class Pool {
     )
   }
 
-  getPlayerGenome(index) {
-    return this.genomes[index]
-  }
-
-  getGenomeOfSnake(index) {
-    return this.getPlayerGenome(index)
-  }
-
-  // getIndexOfSnakeGenome(id) {
-  //   return id ? this.p2GenomeIndex : this.p1GenomeIndex;
-  // }
-
-  matchResult(player, score) {
-    const genome = this.getGenomeOfSnake(player.id)
+  matchResult(genomeIndex, score) {
+    const genome = this.genomes[genomeIndex]
     genome.addMatch(score)
   }
 }

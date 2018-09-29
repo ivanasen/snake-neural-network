@@ -54,6 +54,8 @@ if (!process.env.NODE_ENV !== 'production') {
   })
 }
 
+app.use('/scripts', express.static(path.join(__dirname, '/src')))
+
 // Serving the saves files from /saves
 app.use('/saves', express.static(path.join(__dirname, '/saves')))
 

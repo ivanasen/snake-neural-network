@@ -15,17 +15,17 @@ function getInputLayer(
     size,
     food,
     foodSize,
-    borders
+    borders,
+    baseAngle
   },
   done
 ) {
   const inputLayer = []
-
   const step = (Math.PI * 2) / (displayedWhiskers * 1.2)
 
   for (let i = 0; i < displayedWhiskers; i++) {
     const modifier = i > displayedWhiskers / 2 ? -1 : 1
-    const angle = angle + step * (i % (displayedWhiskers / 2)) * modifier
+    const angle = baseAngle + step * (i % (displayedWhiskers / 2)) * modifier
 
     const result = getDistanceToHitSensor(
       x,

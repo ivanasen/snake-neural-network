@@ -1,3 +1,5 @@
+const _collideDebug = false
+
 const distNotSquared = (x1, y1, x2, y2) =>
   (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)
 
@@ -76,7 +78,7 @@ const collideLineCircle = (x1, y1, x2, y2, cx, cy, diameter) => {
   // get distance to closest point
   distX = closestX - cx
   distY = closestY - cy
-  const distance = sqrt(distX * distX + distY * distY)
+  const distance = Math.sqrt(distX * distX + distY * distY)
 
   if (distance <= diameter / 2) {
     return [closestX, closestY]
@@ -161,7 +163,8 @@ const collidePointRect = (pointX, pointY, x, y, xW, yW) => {
   return false
 }
 
-const dist = (x1, y1, x2, y2) => Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+const dist = (x1, y1, x2, y2) =>
+  Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
 
 const map = (value, upperValue, lowerValue, lowerTarget, upperTarget) => {
   return value / upperValue

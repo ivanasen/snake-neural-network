@@ -277,7 +277,7 @@ class Snake {
           food,
           foodSize,
           borders: HIT_BORDERS,
-          angle: this.angle
+          baseAngle: this.angle
         })
         .on('done', function(response) {
           resolve(response)

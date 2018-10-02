@@ -43,7 +43,14 @@ class Game {
     this.snakesList = []
 
     _.range(0, this.snakesCount).forEach(id => {
-      const snake = new Snake(this.snakesList, id, this.width, this.height, this.foodPool, this.debug)
+      const snake = new Snake(
+        this.snakesList,
+        id,
+        this.width,
+        this.height,
+        this.foodPool,
+        this.debug
+      )
       this.snakesList.push(snake)
     })
 
@@ -51,7 +58,9 @@ class Game {
       this.snakesList.forEach(snake => Snake.setDebug())
     }
 
-    $('#snakes-animation-holder').addClass('ready')
+    setTimeout(() => {
+      $('#snakes-animation-holder').addClass('ready')
+    }, 3000)
   }
 
   draw() {

@@ -13,55 +13,53 @@ class Pool {
   }
 
   newGeneration() {
-    const maxFitness = this.getMaxFitness()
-    const chartsData = {
-      x: this.generation,
-      y: maxFitness
-    }
+    setTimeout(() => {
+      const maxFitness = this.getMaxFitness()
+      const currentPerf = {
+        x: this.generation,
+        y: maxFitness
+      }
 
-    this.championsPerfs.push(chartsData)
-    this.hydrateChart()
+      this.championsPerfs.push(currentPerf)
 
-    // Kill worst genomes
-    this.genomes = this.selectBestGenomes(
-      this.genomes,
-      config.KeepAlivePercent,
-      config.Population
-    )
+      // Kill worst genomes
+      this.genomes = this.selectBestGenomes(
+        this.genomes,
+        config.KeepAlivePercent,
+        config.Population
+      )
 
-    const bestGenomes = _.clone(this.genomes)
+      const bestGenomes = _.clone(this.genomes)
 
-    // Crossover
-    while (this.genomes.length < config.Population - 2) {
-      const gen1 = this.getRandomGenome(bestGenomes)
-      const gen2 = this.getRandomGenome(bestGenomes)
-      const newGenome = this.mutate(this.crossOver(gen1, gen2))
-      this.genomes.push(newGenome)
-    }
-    // 2 random from the best will get mutations
-    while (this.genomes.length < config.Population) {
-      const gen = this.getRandomGenome(bestGenomes)
-      const newGenome = this.mutate(gen)
-      this.genomes.push(newGenome)
-    }
+      // Crossover
+      while (this.genomes.length < config.Population - 2) {
+        const gen1 = this.getRandomGenome(bestGenomes)
+        const gen2 = this.getRandomGenome(bestGenomes)
+        const newGenome = this.mutate(this.crossOver(gen1, gen2))
+        this.genomes.push(newGenome)
+      }
 
-    // Increment the age of a Genome for debug checking
-    // If the top Genome keeps aging and aging it means no children was able to beat him
-    // Which might indicate that we're stuck and the network converged
-    this.genomes.forEach(g => {
-      g.age++
-    })
+      // 2 random from the best will get mutations
+      while (this.genomes.length < config.Population) {
+        const gen = this.getRandomGenome(bestGenomes)
+        const newGenome = this.mutate(gen)
+        this.genomes.push(newGenome)
+      }
 
-    // Reset Matches & fitness
-    this.genomes.forEach(g => {
-      g.matches = []
-      g.fitness = 0
-    })
+      // Increment the age of a Genome for debug checking
+      // If the top Genome keeps aging and aging it means no children was able to beat him
+      // Which might indicate that we're stuck and the network converged
+      this.genomes.forEach(g => {
+        g.age++
+        g.matches = []
+        g.fitness = 0
+      })
 
-    //Save JSON
-    this.saveState()
-    console.log(`Completed Generation ${this.generation}`)
-    this.generation++
+      //Save JSON
+      this.saveState()
+      console.log(`Completed Generation ${this.generation}`)
+      this.generation++
+    }, 0)
   }
 
   saveState() {
@@ -92,7 +90,9 @@ class Pool {
 
   calculateMutationChance() {
     const maxFitness = this.getMaxFitness()
-    return maxFitness > 100 ? Math.min((1 / Math.pow(maxFitness, 0.35)), config.MutationChance) : config.MutationChance
+    return maxFitness > 100
+      ? Math.min(1 / Math.pow(maxFitness, 0.35), config.MutationChance)
+      : config.MutationChance
   }
 
   // Given an array of object with key and mutationChance
@@ -105,15 +105,6 @@ class Pool {
       }
     })
     return finalObj
-  }
-
-  hydrateChart() {
-    // chart.data.datasets[0].data = this.championsPerfs.slice()
-    // chart.update()
-    // const ageStats = this.genomes.map(g => g.age)
-    // ageStats.length = ~~(config.Population * config.KeepAlivePercent)
-    // ageChart.data.datasets[0].data = ageStats
-    // ageChart.update()
   }
 
   getRandomGenome(list) {

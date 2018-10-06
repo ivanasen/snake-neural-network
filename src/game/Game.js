@@ -4,7 +4,7 @@ import config from '../config.json'
 import charts from './charts'
 import { pool } from '../genetics/PoolClient'
 import FoodPool from './FoodPool'
-import Snake from './SnakeWorker'
+import Snake from './Snake'
 
 class Game {
   constructor(width, height) {
@@ -12,16 +12,15 @@ class Game {
     this.snakesCount = config.Population
     this.snakesList = []
     this.debug = config.Debug
-    this.showSnakesSensors = 0
     this.humanControlled = 0
     this.frameCount = 0
     this.width = width
     this.height = height
     this.shouldEvolve = config.ShouldEvolve
-    this.setupChart()
+    this.setupCharts()
   }
 
-  setupChart() {
+  setupCharts() {
     window.chart = charts.perfChart()
   }
 
@@ -52,19 +51,14 @@ class Game {
       this.snakesList.push(snake)
     })
 
-    if (this.showSnakesSensors) {
-      this.snakesList.forEach(snake => Snake.setDebug())
-    }
-
     setTimeout(() => $('#snakes-animation-holder').addClass('ready'), 3000)
   }
-
+  
   draw() {
-    this.clear()
-
     if (!this.snakesList) return
-
+    
     for (let i = 0; i < this.simulationSpeed; i++) {
+      this.clear()
       this.foodPool.draw()
       this.handleNextTick()
     }
@@ -75,17 +69,13 @@ class Game {
   }
 
   handleNextTick() {
-    if (++pool.roundTicksElapsed >= pool.maxRoundTicks && this.shouldEvolve) {
-      pool.newGeneration()
+    if (this.shouldEvolve) {
+      if (++pool.ticksElapsed >= pool.maxTicks) {
+        pool.newGeneration()
+      }
     }
 
-    if (pool.roundTicksElapsed % 2 == 0) {
-      this.snakesList.forEach(snake => {
-        !snake.dead && snake.getInputsAndAssignDir()
-      })
-    }
-
-    this.snakesList.forEach(snake => snake.update())
+    this.snakesList.forEach(snake => snake.show())
   }
 }
 

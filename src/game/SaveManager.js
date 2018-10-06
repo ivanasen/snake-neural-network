@@ -44,8 +44,6 @@ class SaveManager {
       hGen.hydrateNetwork()
       return hGen
     })
-
-    setTimeout(pool.hydrateChart.bind(pool), 1000)
   }
 
   getPreviousSaves(callback) {

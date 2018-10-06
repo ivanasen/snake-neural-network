@@ -2,7 +2,6 @@
 import 'global.scss'
 import { pool } from 'genetics/PoolClient'
 import Game from 'game/Game'
-import 'game/canvas-debug'
 import './animationInnerContent'
 import './chartButtons'
 

@@ -279,6 +279,5 @@ module.exports = function getInputLayer(
   const hitNormalised = map(closestDistance, whiskerSize, 0, 0, 1)
     inputLayer.push(hitNormalised, result.from, result.isFood)
   }
-
   done(inputLayer)
 }

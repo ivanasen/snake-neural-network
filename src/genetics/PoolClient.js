@@ -1,23 +1,27 @@
 import Worker from 'worker-loader!./Pool.worker.js'
 import config from '../config.json'
-
 class PoolClient {
-  constructor() {
-    this.roundTicksElapsed = 0
-    this.maxRoundTicks = config.GenerationLength
+  constructor(chart) {
+    this.ticksElapsed = 0
+    this.maxTicks = config.GenerationLength
     this.worker = new Worker()
+    this.chart = chart
   }
 
   newGeneration() {
+    this.ticksElapsed = 0
     this.callPoolMethod('newGeneration')
-  }
-
-  hydrateChart() {
-    this.callPoolMethod('hydrateChart')
   }
 
   init() {
     this.callPoolMethod('init')
+  }
+
+  hydrateChart() {
+    this.getChampionsPerfs().then(championsPerfs => {
+      this.chart.data.datasets[0].data = championsPerfs
+      this.chart.update()
+    })
   }
 
   evaluateGenome(networkInputs, genomeIndex) {

@@ -1,4 +1,5 @@
 import Genome from '../genetics/Genome'
+import { pool } from '../genetics/PoolClient'
 
 class SaveManager {
   constructor() {
@@ -57,9 +58,9 @@ class SaveManager {
     req.send(null)
   }
 
-  saveState(pool, callback) {
+  saveState(pool) {
     console.log('Using static version, so can\'t save sate.')
   }
 }
 
-export let sm = new SaveManager()
+export const saveManager = new SaveManager()

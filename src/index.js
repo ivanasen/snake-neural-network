@@ -1,7 +1,6 @@
 //import 'game/utils';
 import 'global.scss'
-import { pool } from 'genetics/Pool'
-import { sm } from 'game/StaticSaveManager'
+import { pool } from 'genetics/PoolClient'
 import Game from 'game/Game'
 import 'game/canvas-debug'
 import './animationInnerContent'
@@ -13,24 +12,27 @@ const game = new Game(width, height)
 
 pool.init()
 
-sm.getLoadState(() => {
-  chart.data.datasets[0].data = pool.championsPerfs.slice().map(c => {
-    return { x: c.generation, y: c.fitness }
-  })
-  chart.update()
-})
+pool.getLoadState()
+// .then(() => {
+//   return pool.getChampionsPerfs()
+// }).then(championsPerfs => {
+//   chart.data.datasets[0].data = championsPerfs.slice().map(c => {
+//     return { x: c.generation, y: c.fitness }
+//   })
+//   chart.update()
+// })
 
-window.pool = pool
-window.Game = Game
 // Called one time at load
 window.setup = () => {
   game.setup()
 }
 
-// Called on every frame
-window.draw = () => {
-  game.draw()
-}
+setTimeout(() => {
+  // Called on every frame
+  window.draw = () => {
+    game.draw()
+  }
+}, 1500)
 
 // Reset the Canvas
 window.reset = () => {

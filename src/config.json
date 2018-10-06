@@ -12,7 +12,7 @@
   "SnakeMaxLength": 20,
   "SnakeSize": 5,
   "SnakeBlurSize": 20,
-  "SnakeSpeed": 2.5,
+  "SnakeSpeed": 3,
   "FoodSize": 25,
   "FoodAmount": 10,
   "FoodPulseInterval": 480,

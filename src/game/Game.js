@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import config from '../config.json'
 import charts from './charts'
-import { pool } from '../genetics/Pool'
+import { pool } from '../genetics/PoolClient'
 import FoodPool from './FoodPool'
 import Snake from './SnakeWorker'
 
@@ -22,9 +22,7 @@ class Game {
   }
 
   setupChart() {
-    document.addEventListener('DOMContentLoaded', e => {
-      window.chart = charts.perfChart()
-    })
+    window.chart = charts.perfChart()
   }
 
   setup() {
@@ -58,9 +56,7 @@ class Game {
       this.snakesList.forEach(snake => Snake.setDebug())
     }
 
-    setTimeout(() => {
-      $('#snakes-animation-holder').addClass('ready')
-    }, 3000)
+    setTimeout(() => $('#snakes-animation-holder').addClass('ready'), 3000)
   }
 
   draw() {

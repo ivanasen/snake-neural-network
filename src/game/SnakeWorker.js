@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import config from '../config.json'
-import { pool } from '../genetics/Pool'
+import { pool } from '../genetics/PoolClient'
 import {
   // collideLineCircle,
   // collideLineLine,
@@ -208,22 +208,24 @@ class Snake {
     }
   }
 
-  getInputLayer({
-    displayedWhiskers,
-    x,
-    y,
-    whiskerSize,
-    snakesList,
-    id,
-    size,
-    food,
-    foodSize,
-    borders
-  }, done) {
+  getInputLayer(
+    {
+      displayedWhiskers,
+      x,
+      y,
+      whiskerSize,
+      snakesList,
+      id,
+      size,
+      food,
+      foodSize,
+      borders
+    },
+    done
+  ) {
     const inputLayer = []
 
     const step = (Math.PI * 2) / (displayedWhiskers * 1.2)
-    
 
     for (let i = 0; i < displayedWhiskers; i++) {
       const modifier = i > displayedWhiskers / 2 ? -1 : 1
@@ -253,7 +255,7 @@ class Snake {
   getInputLayerAsync() {
     return new Promise((resolve, reject) => {
       const whiskerSize = this.whiskersize
-    
+
       const snakesList = this.snakesList.map(snake => ({
         history: snake.history.map(item => ({ x: item.x, y: item.y })),
         pos: { x: snake.pos.x, y: snake.pos.y }
@@ -262,9 +264,9 @@ class Snake {
       const size = this.size
       const food = this.foodPool.food.map(food => ({ x: food.x, y: food.y }))
       const foodSize = this.foodPool.foodSize
-    
+
       const displayedWhiskers = config.NbWhiskers
-    
+
       workerPool
         .send({
           displayedWhiskers,
@@ -289,7 +291,7 @@ class Snake {
         .on('exit', function() {
           console.log('Worker has been terminated.')
           resolve('sef')
-        })      
+        })
     })
   }
 
@@ -331,10 +333,13 @@ class Snake {
       this.getInputLayerAsync().then(inputs => {
         this.lastInputLayer = inputs
 
-        const pressedKey = pool.evaluateGenome(this.lastInputLayer, this.id)
+        pool.evaluateGenome(this.lastInputLayer, this.id).then(pressedKey => {
+          if (pressedKey.data) {
+            this.setPressedKey(pressedKey.data)
+          }
+        })
         // let controller = Math.random();
         //console.log(inputs,controller);
-        this.setPressedKey(pressedKey)
       })
     } else {
       this.currentUpdate++
@@ -506,19 +511,19 @@ class Snake {
   }
 
   showTrail() {
-    const gradient = drawingContext.createRadialGradient(
-      this.pos.x,
-      this.pos.y,
-      0,
-      this.pos.x,
-      this.pos.y,
-      config.SnakeBlurSize / 2
-    )
-    gradient.addColorStop(0, `hsla(${this.hue}, 90%, 50%, 0.2)`)
-    gradient.addColorStop(1, 'transparent')
-    drawingContext.fillStyle = gradient
-    noStroke()
-    ellipse(this.pos.x, this.pos.y, config.SnakeBlurSize, config.SnakeBlurSize)
+    // const gradient = drawingContext.createRadialGradient(
+    //   this.pos.x,
+    //   this.pos.y,
+    //   0,
+    //   this.pos.x,
+    //   this.pos.y,
+    //   config.SnakeBlurSize / 2
+    // )
+    // gradient.addColorStop(0, `hsla(${this.hue}, 90%, 50%, 0.2)`)
+    // gradient.addColorStop(1, 'transparent')
+    // drawingContext.fillStyle = gradient
+    // noStroke()
+    // ellipse(this.pos.x, this.pos.y, config.SnakeBlurSize, config.SnakeBlurSize)
 
     fill(this.hue, 90, 70)
     ellipse(this.pos.x, this.pos.y, this.size, this.size)

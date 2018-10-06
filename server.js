@@ -23,10 +23,6 @@ app.get('/listsaves', (req, res) => {
   })
 })
 
-app.get('/saves/save.json', (req, res) => {
-
-})
-
 if (!process.env.NODE_ENV !== 'production') {
   // In dev use webpack dev middleware
   const compiler = webpack(config)

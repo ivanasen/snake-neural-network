@@ -4,6 +4,11 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 
 export default {
+  entry: path.join(__dirname, 'src/index.js'),
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: 'bundle.js'
+  },
   module: {
     rules: [
       {
@@ -38,11 +43,6 @@ export default {
         use: 'file-loader'
       }
     ]
-  },
-  output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js'
-    //libraryTarget: 'commonjs2'
   },
   resolve: {
     extensions: ['.js', '.json'],

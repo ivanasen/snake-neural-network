@@ -107,46 +107,6 @@ const collidePointLine = (px, py, x1, y1, x2, y2, buffer) => {
   return d1 + d2 >= lineLen - buffer && d1 + d2 <= lineLen + buffer
 }
 
-const collideLineEllipse = (x1, y1, x2, y2, cx, cy, rx, ry) => {
-  // is either end INSIDE the ellipse?
-  // if so, return true immediately
-  const inside1 = collidePointEllipse(x1, y1, cx, cy, rx, ry)
-  const inside2 = collidePointEllipse(x2, y2, cx, cy, rx, ry)
-  if (inside1 || inside2) return true
-
-  // get length of the line
-  // let distX = x1 - x2;
-  // let distY = y1 - y2;
-  // const len = ((distX * distX) + (distY * distY));
-
-  // // get dot product of the line and circle
-  // const dot = (((cx - x1) * (x2 - x1)) + ((cy - y1) * (y2 - y1))) / len;
-
-  // // find the closest point on the line
-  // const closestX = x1 + (dot * (x2 - x1));
-  // const closestY = y1 + (dot * (y2 - y1));
-
-  // // is this point actually on the line segment?
-  // // if so keep going, but if not, return false
-  // const onSegment = collidePointLine(closestX, closestY, x1, y1, x2, y2);
-  // if (!onSegment) return false;
-
-  // // draw a debug circle at the closest point on the line
-  // if (_collideDebug) {
-  //   ellipse(closestX, closestY, 10, 10);
-  // }
-
-  // // get distance to closest point
-  // distX = closestX - cx;
-  // distY = closestY - cy;
-  // const distance = sqrt((distX * distX) + (distY * distY));
-
-  // if (distance <= diameter / 2) {
-  //   return [closestX, closestY];
-  // }
-  return false
-}
-
 const collidePointEllipse = (x, y, cx, cy, rx, ry) =>
   ((x - cx) * (x - cx)) / (rx * rx) + ((y - cy) * (y - cy)) / (ry * ry) <= 1
 
@@ -277,4 +237,48 @@ const getDistanceToHitSensor = (
     from: from,
     isFood: isFood
   }
+}
+
+module.exports = function getInputLayer(
+  {
+    displayedWhiskers,
+    x,
+    y,
+    whiskerSize,
+    snakesList,
+    id,
+    size,
+    food,
+    foodSize,
+    borders,
+    baseAngle
+  },
+  done
+) {
+  const inputLayer = []
+  const step = (Math.PI * 2) / (displayedWhiskers * 1.2)
+
+  for (let i = 0; i < displayedWhiskers; i++) {
+    const modifier = i > displayedWhiskers / 2 ? -1 : 1
+    const angle = baseAngle + step * (i % (displayedWhiskers / 2)) * modifier
+
+    const result = getDistanceToHitSensor(
+      x,
+      y,
+      angle,
+      whiskerSize,
+      snakesList,
+      id,
+      size,
+      food,
+      foodSize,
+      borders
+    )
+
+    const closestDistance = Math.min(result.hit, whiskerSize)
+  const hitNormalised = map(closestDistance, whiskerSize, 0, 0, 1)
+    inputLayer.push(hitNormalised, result.from, result.isFood)
+  }
+
+  done(inputLayer)
 }

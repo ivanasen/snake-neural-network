@@ -7,59 +7,9 @@ import {
   collidePointRect,
   distNotSquared,
   collidePointCircle,
-  getRandomPosition
+  getRandomPosition,
+  HIT_BORDERS
 } from '../util'
-
-const topLeft = {
-  x: 0,
-  y: 0
-}
-
-const topRight = {
-  x: window.innerWidth,
-  y: 0
-}
-
-const bottomLeft = {
-  x: 0,
-  y: window.innerHeight
-}
-
-const bottomRight = {
-  x: window.innerWidth,
-  y: window.innerHeight
-}
-
-const centerTopLeft = {
-  x: (window.innerWidth - config.CenterEllipseWidth) / 2,
-  y: (window.innerHeight - config.CenterEllipseHeight) / 2
-}
-
-const centerTopRight = {
-  x: (window.innerWidth + config.CenterEllipseWidth) / 2,
-  y: (window.innerHeight - config.CenterEllipseHeight) / 2
-}
-
-const centerBottomLeft = {
-  x: (window.innerWidth - config.CenterEllipseWidth) / 2,
-  y: (window.innerHeight + config.CenterEllipseHeight) / 2
-}
-
-const centerBottomRight = {
-  x: (window.innerWidth + config.CenterEllipseWidth) / 2,
-  y: (window.innerHeight + config.CenterEllipseHeight) / 2
-}
-
-const HIT_BORDERS = [
-  [topLeft, topRight],
-  [topLeft, bottomLeft],
-  [topRight, bottomRight],
-  [bottomLeft, bottomRight],
-  [centerTopLeft, centerTopRight],
-  [centerTopLeft, centerBottomLeft],
-  [centerTopRight, centerBottomRight],
-  [centerBottomLeft, centerBottomRight]
-]
 
 class Snake {
   constructor(

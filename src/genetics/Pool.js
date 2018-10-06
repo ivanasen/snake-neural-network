@@ -2,12 +2,10 @@ import { cloneDeep } from 'lodash'
 import config from '../config.json'
 import Genome from './Genome'
 import { Network } from 'synaptic'
-// import { sm } from '../game/StaticSaveManager'
+import { saveManager } from '../game/SaveManager'
 
 class Pool {
   constructor() {
-    this.roundTicksElapsed = 0
-    this.maxRoundTicks = config.GenerationLength
     this.generation = 0
     this.championsPerfs = []
     this.playersGenomeIndexes = []
@@ -15,8 +13,6 @@ class Pool {
   }
 
   newGeneration() {
-    this.roundTicksElapsed = 0
-
     const maxFitness = this.getMaxFitness()
     const chartsData = {
       x: this.generation,
@@ -63,13 +59,13 @@ class Pool {
     })
 
     //Save JSON
-    this.saveState(this)
+    this.saveState()
     console.log(`Completed Generation ${this.generation}`)
     this.generation++
   }
 
-  saveState(pool) {
-    sm.saveState(pool)
+  saveState() {
+    saveManager.saveState(this)
   }
 
   mutate(genome) {
@@ -112,9 +108,9 @@ class Pool {
   }
 
   hydrateChart() {
-    chart.data.datasets[0].data = this.championsPerfs.slice()
-    chart.update()
-    const ageStats = this.genomes.map(g => g.age)
+    // chart.data.datasets[0].data = this.championsPerfs.slice()
+    // chart.update()
+    // const ageStats = this.genomes.map(g => g.age)
     // ageStats.length = ~~(config.Population * config.KeepAlivePercent)
     // ageChart.data.datasets[0].data = ageStats
     // ageChart.update()
@@ -181,11 +177,6 @@ class Pool {
     this.genomes = this.buildInitGenomes()
   }
 
-  reboot() {
-    this.init()
-    this.hydrateChart()
-  }
-
   evaluateGenome(networkInputs, genomeIndex) {
     const output = this.genomes[genomeIndex].network.activate(networkInputs)
     return output
@@ -202,6 +193,14 @@ class Pool {
   matchResult(genomeIndex, score) {
     const genome = this.genomes[genomeIndex]
     genome.addMatch(score)
+  }
+
+  getLoadState() {
+    return saveManager.getLoadState()
+  }
+
+  getChampionsPerfs() {
+    return this.championsPerfs
   }
 }
 

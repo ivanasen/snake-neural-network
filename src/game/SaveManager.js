@@ -48,8 +48,7 @@ class SaveManager {
   }
 
   saveState(pool) {
-    const poolJson = JSON.stringify(pool)
-    axios.post('/savestate', poolJson)
+    axios.post('/savestate', pool)
   }
 }
 

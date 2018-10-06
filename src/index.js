@@ -10,16 +10,14 @@ const height = $('#snakes-animation-holder').height()
 const game = new Game(width, height)
 
 pool.init()
-
 pool.getLoadState()
-// .then(() => {
-//   return pool.getChampionsPerfs()
-// }).then(championsPerfs => {
-//   chart.data.datasets[0].data = championsPerfs.slice().map(c => {
-//     return { x: c.generation, y: c.fitness }
-//   })
-//   chart.update()
-// })
+
+setTimeout(() => {
+  pool.getChampionsPerfs().then(championsPerfs => {
+    chart.data.datasets[0].data = championsPerfs
+    chart.update()
+  })
+}, 5000)
 
 // Called one time at load
 window.setup = () => {

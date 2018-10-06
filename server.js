@@ -10,7 +10,8 @@ const config = require('./webpack.config.js')
 
 app.set('port', process.env.PORT || 8080)
 
-app.use(bodyParser.json({ limit: '50mb' }))
+app.use(bodyParser.json({ limit: '50mb', extended: true }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 
 // Listing different saves
 app.get('/listsaves', (req, res) => {
@@ -57,18 +58,13 @@ app.use('/saves', express.static(path.join(__dirname, '/saves')))
 
 // POST in local on /savestate stores in /saves
 app.post('/savestate', (req, res) => {
-  if (process.env.NODE_ENV != 'production') {
-    var data = req.body
-    if (data) {
-      fs.writeFile(
-        `./saves/${data.generation}.json`,
-        JSON.stringify(data),
-        e => {
-          if (e) console.log(e)
-        }
-      )
-    }
+  const data = req.body
+  if (data) {
+    fs.writeFile(`./saves/${data.generation}.json`, JSON.stringify(data), e => {
+      if (e) console.log(e)
+    })
   }
+
   res.send({ status: true })
 })
 

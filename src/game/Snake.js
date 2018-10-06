@@ -119,8 +119,8 @@ class Snake {
         this.lastInputLayer = inputs
 
         pool.evaluateGenome(this.lastInputLayer, this.id).then(pressedKey => {
-          if (pressedKey.data) {
-            const output = pressedKey.data[0]
+          if (pressedKey) {
+            const output = pressedKey[0]
             this.setPressedKey(output)
           }
         })

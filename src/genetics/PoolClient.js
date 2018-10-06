@@ -4,8 +4,24 @@ class PoolClient {
   constructor(chart) {
     this.ticksElapsed = 0
     this.maxTicks = config.GenerationLength
-    this.worker = new Worker()
     this.chart = chart
+    this.initWorker()
+  }
+
+  initWorker() {
+    this.resolves = []
+    this.rejects = []
+    this.worker = new Worker()
+    this.worker.onmessage = output => {
+      this.rejects.shift()
+      const resolve = this.resolves.shift()
+      resolve(output.data)
+    }
+    this.worker.onerror = error => {
+      this.resolves.shift()
+      const reject = this.rejects.shift()
+      reject(error)
+    }
   }
 
   newGeneration() {
@@ -25,10 +41,7 @@ class PoolClient {
   }
 
   evaluateGenome(networkInputs, genomeIndex) {
-    return this.callPoolMethod(
-      'evaluateGenome',
-      [networkInputs, genomeIndex]
-    )
+    return this.callPoolMethod('evaluateGenome', [networkInputs, genomeIndex])
   }
 
   matchResult(genomeIndex, score) {
@@ -46,8 +59,8 @@ class PoolClient {
   callPoolMethod(method, methodArgs) {
     return new Promise((resolve, reject) => {
       this.worker.postMessage({ method, methodArgs })
-      this.worker.onmessage = output => resolve(output)
-      this.worker.onerror = error => reject(error)
+      this.resolves.push(resolve)
+      this.rejects.push(reject)
     })
   }
 }

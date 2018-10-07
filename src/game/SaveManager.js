@@ -5,7 +5,7 @@ import { pool } from '../genetics/Pool'
 class SaveManager {
   getLoadState = () => {
     this.getPreviousSaves().then(saves => {
-      if (!saves) {
+      if (!saves.length) {
         pool.init()
       } else {
         this.loadFile(saves[0])
@@ -37,7 +37,7 @@ class SaveManager {
     })
   }
 
-  getPreviousSaves(callback) {
+  getPreviousSaves() {
     return axios.get('/listsaves').then(
       res => res.data,
       rej => {

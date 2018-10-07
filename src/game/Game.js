@@ -56,10 +56,10 @@ class Game {
   
   draw() {
     if (!this.snakesList) return
+    this.clear()
+    this.foodPool.draw()
     
     for (let i = 0; i < this.simulationSpeed; i++) {
-      this.clear()
-      this.foodPool.draw()
       this.handleNextTick()
     }
   }
@@ -71,6 +71,7 @@ class Game {
   handleNextTick() {
     if (this.shouldEvolve) {
       if (++pool.ticksElapsed >= pool.maxTicks) {
+        this.snakesList.forEach(snake => snake.matchResult())
         pool.newGeneration()
       }
     }

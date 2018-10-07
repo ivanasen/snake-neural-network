@@ -57,7 +57,7 @@ class Pool {
 
       //Save JSON
       this.saveState()
-      console.log(`Completed Generation ${this.generation}`)
+      console.log(`Completed Generation ${this.generation}`, `Max Fitness: ${maxFitness}`)
       this.generation++
     }, 0)
   }

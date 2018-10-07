@@ -41,6 +41,7 @@ class Snake {
     this.foodPool = foodPool
     this.currentDirectionUpdateTicks = 0
     this.directionUpdatePeriod = config.SnakeDirectionUpdatePeriod
+    this.resultToMatch = 0
   }
 
   getInputLayerAsync() {
@@ -58,30 +59,27 @@ class Snake {
 
       const displayedWhiskers = config.NbWhiskers
 
+      const inputLayerArgs = {
+        displayedWhiskers,
+        x: this.pos.x,
+        y: this.pos.y,
+        whiskerSize,
+        snakesList,
+        id,
+        size,
+        food,
+        foodSize,
+        borders: HIT_BORDERS,
+        baseAngle: this.angle
+      }
       workerPool
-        .send({
-          displayedWhiskers,
-          x: this.pos.x,
-          y: this.pos.y,
-          whiskerSize,
-          snakesList,
-          id,
-          size,
-          food,
-          foodSize,
-          borders: HIT_BORDERS,
-          baseAngle: this.angle
-        })
-        .on('done', function(response) {
+        .send(inputLayerArgs)
+        .on('done', response => {
           resolve(response)
         })
-        .on('error', function(error) {
+        .on('error', error => {
           console.error('Worker errored:', error)
           resolve(error)
-        })
-        .on('exit', function() {
-          console.log('Worker has been terminated.')
-          resolve('sef')
         })
     })
   }
@@ -112,16 +110,20 @@ class Snake {
     this.checkCollisions()
   }
 
+  matchResult() {
+    pool.matchResult(this.id, this.resultToMatch)
+    this.resultToMatch = 0
+  }
+
   getInputsAndAssignDir = () => {
     if (++this.currentDirectionUpdateTicks >= this.directionUpdatePeriod) {
       this.currentDirectionUpdateTicks = 0
       this.getInputLayerAsync().then(inputs => {
         this.lastInputLayer = inputs
 
-        pool.evaluateGenome(this.lastInputLayer, this.id).then(pressedKey => {
-          if (pressedKey) {
-            const output = pressedKey[0]
-            this.setPressedKey(output)
+        pool.evaluateGenome(this.lastInputLayer, this.id).then(outputs => {
+          if (outputs.length) {
+            this.setPressedKey(outputs[0])
           }
         })
       })
@@ -131,14 +133,13 @@ class Snake {
   // Outputs is an array with 3 elements [a,b,c]
   // We arbitrarily decided which is going to do what
   // I could have decided a was stay-still, b was left
-  setPressedKey = (value) => {
-
+  setPressedKey = value => {
     let newDirection = 2
     if (value > 0.55) newDirection = 1
     if (value < 0.45) newDirection = 0
 
-    if (newDirection !== this.direction) {
-      pool.matchResult(this.id, config.ChangeDirectionReward)
+    if (newDirection === this.direction) {
+      this.resultToMatch += config.SameDirectionReward
     }
 
     this.direction = newDirection
@@ -227,16 +228,17 @@ class Snake {
 
   stop() {
     this.resetPosition()
-    pool.matchResult(this.id, config.DieReward)
+    this.resultToMatch += config.DieReward
   }
 
   resetPosition() {
     this.pos = getRandomPosition(this.canvasWidth, this.canvasHeight)
+    this.history.length = 0
   }
 
   show() {
     this.update()
-    
+
     if (this.debug) {
       this.showHistory()
     } else {
@@ -290,7 +292,7 @@ class Snake {
       )
       if (eatsFood) {
         this.foodPool.eat(index)
-        pool.matchResult(this.id, config.EatFoodReward)
+        this.resultToMatch += config.EatFoodReward
       }
     })
   }

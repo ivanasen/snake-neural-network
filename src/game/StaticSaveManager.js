@@ -1,65 +1,46 @@
 import Genome from '../genetics/Genome'
-import { pool } from '../genetics/PoolClient'
+import axios from 'axios'
+import { pool } from '../genetics/Pool'
 
 class SaveManager {
-  constructor() {
-    this.lastSaveTime = 0
-    this.previous = []
+  getLoadState = () => {
+    this.getSaticSave().then(save => {
+      if (!save) {
+        pool.init()
+      } else {
+        this.loadFile(save)
+      }
+    })
   }
 
-  elapsed() {
-    return ~~((+new Date() - this.lastSaveTime) / 1000)
+  loadFile(file) {
+    this.hydrate(file)
   }
 
-  getLoadState = (callback) => {
-    var sessionPool = sessionStorage.pool
-    if (sessionPool) {
-      this.hydrate(JSON.parse(sessionPool), callback)
-    } else {
-      this.getSaticSave(save => {
-        if (!save) {
-          pool.init()
-          setTimeout(callback, 500)
-        } else {
-          this.loadFile(save, callback)
-        }
-      })
-    }
-  }
-
-  loadFile(file, callback) {
-    this.hydrate(file, callback)
-  }
-
-  hydrate(json, callback) {
-    // json is a representation of pool
-    // Copy all the keys
-    Object.assign(pool, json)
+  hydrate(poolJson) {
+    Object.assign(pool, poolJson)
 
     //Re Hydrate the genomes
     pool.genomes = pool.genomes.map(g => {
-      const hGen = new Genome()
-      Object.assign(hGen, g)
-      hGen.hydrateNetwork()
-      return hGen
+      const hydratedGenome = new Genome()
+      Object.assign(hydratedGenome, g)
+      hydratedGenome.hydrateNetwork()
+      return hydratedGenome
     })
-    setTimeout(pool.hydrateChart.bind(pool), 1000)
-    callback()
   }
 
-  getSaticSave(callback) {
-    var req = new XMLHttpRequest()
-    req.open('GET', '/saves/173.json', true)    
-    req.onreadystatechange = e => {
-      if (req.readyState == 4) {
-        callback(JSON.parse(req.responseText))
+  getSaticSave() {
+    return axios.get('/saves/147.json').then(
+      res => res.data,
+      rej => {
+        console.log(rej)
+        pool.init()
       }
-    }
-    req.send(null)
+    )
   }
 
   saveState(pool) {
-    console.log('Using static version, so can\'t save sate.')
+    console.log("Using static version, so can't save sate.")
   }
 }
 

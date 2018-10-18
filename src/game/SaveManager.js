@@ -3,6 +3,8 @@ import axios from 'axios'
 import { pool } from '../genetics/Pool'
 
 class SaveManager {
+  POOL_STATE = 'POOL_STATE'
+  
   getLoadState = () => {
     this.getPreviousSaves().then(saves => {
       if (!saves.length) {
@@ -38,17 +40,20 @@ class SaveManager {
   }
 
   getPreviousSaves() {
-    return axios.get('/listsaves').then(
-      res => res.data,
-      rej => {
-        console.log(rej)
-        pool.init()
-      }
-    )
+    const pool = localStorage.getItem(POOL_STATE)
+    return pool
+    // return axios.get('/listsaves').then(
+    //   res => res.data,
+    //   rej => {
+    //     console.log(rej)
+    //     pool.init()
+    //   }
+    // )
   }
 
   saveState(pool) {
-    axios.post('/savestate', pool)
+    localStorage.setItem(POOL_STATE, pool)
+    // axios.post('/savestate', pool)
   }
 }
 

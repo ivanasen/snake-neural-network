@@ -194,53 +194,46 @@ export const collidePointRect = (pointX, pointY, x, y, xW, yW) => {
   return false
 }
 
-const topLeft = {
-  x: 0,
-  y: 0
-}
+const topLeft = [0, 0]
+const topRight = [window.innerWidth, 0]
+const bottomLeft = [0, window.innerHeight]
+const bottomRight = [window.innerWidth, window.innerHeight]
 
-const topRight = {
-  x: window.innerWidth,
-  y: 0
-}
-
-const bottomLeft = {
-  x: 0,
-  y: window.innerHeight
-}
-
-const bottomRight = {
-  x: window.innerWidth,
-  y: window.innerHeight
-}
-
-const centerTopLeft = {
-  x: (window.innerWidth - config.CenterEllipseWidth) / 2,
-  y: (window.innerHeight - config.CenterEllipseHeight) / 2
-}
-
-const centerTopRight = {
-  x: (window.innerWidth + config.CenterEllipseWidth) / 2,
-  y: (window.innerHeight - config.CenterEllipseHeight) / 2
-}
-
-const centerBottomLeft = {
-  x: (window.innerWidth - config.CenterEllipseWidth) / 2,
-  y: (window.innerHeight + config.CenterEllipseHeight) / 2
-}
-
-const centerBottomRight = {
-  x: (window.innerWidth + config.CenterEllipseWidth) / 2,
-  y: (window.innerHeight + config.CenterEllipseHeight) / 2
-}
-
-export const HIT_BORDERS = [
-  [topLeft, topRight],
-  [topLeft, bottomLeft],
-  [topRight, bottomRight],
-  [bottomLeft, bottomRight],
-  [centerTopLeft, centerTopRight],
-  [centerTopLeft, centerBottomLeft],
-  [centerTopRight, centerBottomRight],
-  [centerBottomLeft, centerBottomRight]
+const centerTopLeft = [
+  (window.innerWidth - config.CenterEllipseWidth) / 2,
+  (window.innerHeight - config.CenterEllipseHeight) / 2
 ]
+
+const centerTopRight = [
+  (window.innerWidth + config.CenterEllipseWidth) / 2,
+  (window.innerHeight - config.CenterEllipseHeight) / 2
+]
+
+const centerBottomLeft = [
+  (window.innerWidth - config.CenterEllipseWidth) / 2,
+  (window.innerHeight + config.CenterEllipseHeight) / 2
+]
+
+const centerBottomRight = [
+  (window.innerWidth + config.CenterEllipseWidth) / 2,
+  (window.innerHeight + config.CenterEllipseHeight) / 2
+]
+
+export const HIT_BORDERS = new Float32Array([
+  ...topLeft,
+  ...topRight,
+  ...topLeft,
+  ...bottomLeft,
+  ...topRight,
+  ...bottomRight,
+  ...bottomLeft,
+  ...bottomRight,
+  ...centerTopLeft,
+  ...centerTopRight,
+  ...centerTopLeft,
+  ...centerBottomLeft,
+  ...centerTopRight,
+  ...centerBottomRight,
+  ...centerBottomLeft,
+  ...centerBottomRight
+])

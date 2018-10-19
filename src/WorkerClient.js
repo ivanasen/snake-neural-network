@@ -33,9 +33,10 @@ class WorkerClient {
 
   }
 
-  callWorkerMethod(method, methodArgs) {
+  callWorkerMethod(method, methodArgs, transferableList) {
+    
     return new Promise((resolve, reject) => {
-      this.worker.postMessage({ method, methodArgs })
+      this.worker.postMessage({ method, methodArgs }, transferableList)
       this.resolves.push(resolve)
       this.rejects.push(reject)
     })

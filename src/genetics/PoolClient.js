@@ -27,7 +27,14 @@ class PoolClient extends WorkerClient {
   }
 
   evaluateGenome(networkInputs, genomeIndex) {
-    return this.callWorkerMethod('evaluateGenome', [networkInputs, genomeIndex])
+    // In order to pass the array as one argument
+    networkInputs.push(genomeIndex)
+    const inputsTypedArray =  Float32Array.from(networkInputs)
+    return this.callWorkerMethod(
+      'evaluateGenome',
+      inputsTypedArray.buffer,
+      [inputsTypedArray.buffer]
+    )
   }
 
   matchResult(genomeIndex, score) {
@@ -40,14 +47,6 @@ class PoolClient extends WorkerClient {
 
   getChampionsPerfs() {
     return this.callWorkerMethod('getChampionsPerfs')
-  }
-
-  onMessage(message) {
-
-  }
-
-  onError(error) {
-    
   }
 }
 

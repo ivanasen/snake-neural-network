@@ -48,15 +48,37 @@ class Snake {
     return new Promise((resolve, reject) => {
       const whiskerSize = this.whiskersize
 
-      const snakesList = this.snakesList.map(snake => ({
-        history: snake.history.map(item => ({ x: item.x, y: item.y })),
-        pos: { x: snake.pos.x, y: snake.pos.y }
-      }))
+      const totalHistory = this.snakesList.reduce(
+        snake => (snake.history ? snake.history.length : 0)
+      )
+      const snakesListTyped = new Float32Array(totalHistory * 2 + 2)
+      let j = 0
+      this.snakesList.forEach(snake => {
+        snake.history.forEach(item => {
+          snakesListTyped[j++] = item.x
+          snakesListTyped[j++] = item.y
+        })
+        snakesListTyped[j++] = snake.pos.x
+        snakesListTyped[j++] = snake.pos.y
+      })
+      // const snakesListTyped = Float32Array.from(snakesList)
+      // const snakesList = this.snakesList.map(snake => ({
+      //   history: snake.history.map(item => ({ x: item.x, y: item.y })),
+      //   pos: { x: snake.pos.x, y: snake.pos.y }
+      // }))
       const id = this.id
       const size = this.size
-      const food = this.foodPool.food.map(food => ({ x: food.x, y: food.y }))
-      const foodSize = this.foodPool.foodSize
 
+      const foodTyped = new Float32Array(this.foodPool.food.length * 2)
+      let i = 0
+      this.foodPool.food.forEach((piece, index) => {
+        foodTyped[i++] = piece.x
+        foodTyped[i++] = piece.y
+      })
+      // const foodTyped = Float32Array.from(food)
+      // const food = this.foodPool.food.map(food => ({ x: food.x, y: food.y }))
+      const foodSize = this.foodPool.foodSize
+      const bordersTyped = Float32Array.from(HIT_BORDERS)
       const displayedWhiskers = config.NbWhiskers
 
       const inputLayerArgs = {
@@ -64,16 +86,23 @@ class Snake {
         x: this.pos.x,
         y: this.pos.y,
         whiskerSize,
-        snakesList,
+        snakesList: snakesListTyped.buffer,
         id,
         size,
-        food,
+        food: foodTyped.buffer,
         foodSize,
-        borders: HIT_BORDERS,
+        borders: bordersTyped.buffer,
         baseAngle: this.angle
       }
+
+      const transferables = [
+        snakesListTyped.buffer,
+        foodTyped.buffer,
+        bordersTyped.buffer
+      ]
+
       workerPool
-        .send(inputLayerArgs)
+        .send(inputLayerArgs, transferables)
         .on('done', response => {
           resolve(response)
         })

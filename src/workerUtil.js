@@ -149,19 +149,18 @@ const getDistanceToHitSensor = (
 
   let lineX = x + whiskerSize * Math.cos(a)
   let lineY = y + whiskerSize * Math.sin(a)
-  let hit = false // Is the whisker triggered ?
-  let from = false // Is it me, wall or enemy ?
-  let isFood = false // Is it food ?
+  let hit = 0 // Is the whisker triggered ?
+  let from = 0 // Is it me, wall or enemy ?
+  let isFood = 0 // Is it food ?
 
   let shortestDistance = whiskerSize
 
-  //Check borders
-  borders.forEach(border => {
+  for (let i = 0; i < borders.length; i += 4) {
     const hitBorder = collideLineLine(
-      border[0].x,
-      border[0].y,
-      border[1].x,
-      border[1].y,
+      borders[i],
+      borders[i + 1],
+      borders[i + 2],
+      borders[i + 3],
       x,
       y,
       lineX,
@@ -169,38 +168,48 @@ const getDistanceToHitSensor = (
       true
     )
 
-    if (hitBorder.x !== false && hitBorder.y !== false) {
+    if (hitBorder.x !== 0 && hitBorder.y !== 0) {
       const borderDist = dist(x, y, hitBorder.x, hitBorder.y)
       if (borderDist < shortestDistance) {
         shortestDistance = borderDist
         hit = borderDist
         lineX = hitBorder.x
         lineY = hitBorder.y
-        isFood = false
-        from = true
+        isFood = 0
+        from = 1
       }
-    }
-  })
-
-  //Loop through circles and check if line intersects
-  let potentialColliders = []
-  for (let i = 0; i < snakesList.length; i++) {
-    let c = snakesList[i]
-    if (i === id) {
-      potentialColliders = potentialColliders.concat(c.history)
-    } else {
-      potentialColliders = potentialColliders.concat(c.history, [
-        c.pos.x,
-        c.pos.y
-      ])
     }
   }
 
-  for (let i = 0; i < potentialColliders.length; i++) {
-    let p = potentialColliders[i]
+  //Loop through circles and check if line intersects
+  let potentialColliders = snakesList
+  // for (let i = 0; i < snakesList.length; i++) {
+  //   let c = snakesList[i]
+  //   if (i === id) {
+  //     potentialColliders = potentialColliders.concat(c.history)
+  //   } else {
+  //     potentialColliders = potentialColliders.concat(c.history, [
+  //       c.pos.x,
+  //       c.pos.y
+  //     ])
+  //   }
+  // }
+
+  for (let i = 0; i < potentialColliders.length; i += 2) {
+    const colliderX = potentialColliders[i]
+    const colliderY = potentialColliders[i + 1]
     //if further than this.whiskersizepx discard
-    if (distNotSquared(x, y, p.x, p.y) > whiskerSize * whiskerSize) continue
-    let collided = collideLineCircle(x, y, lineX, lineY, p.x, p.y, size * 2)
+    if (distNotSquared(x, y, colliderX, colliderY) > whiskerSize * whiskerSize)
+      continue
+    let collided = collideLineCircle(
+      x,
+      y,
+      lineX,
+      lineY,
+      colliderX,
+      colliderY,
+      size * 2
+    )
     if (collided) {
       let distance = dist(x, y, collided[0], collided[1])
       if (distance < shortestDistance) {
@@ -208,27 +217,49 @@ const getDistanceToHitSensor = (
         hit = distance
         lineX = collided[0]
         lineY = collided[1]
-        isFood = false
-        from = true
+        isFood = 0
+        from = 1
       }
     }
   }
 
   // Check food
-  const hitFood =
-    food
-      .map(piece =>
-        collideLineCircle(x, y, lineX, lineY, piece.x, piece.y, foodSize)
-      )
-      .find(Boolean) || false
-
-  if (hitFood) {
-    hit = dist(x, y, hitFood[0], hitFood[1])
-    lineX = hitFood[0]
-    lineY = hitFood[1]
-    isFood = true
-    from = false
+  for (let i = 0; i < food.length; i += 2) {
+    const hitFood = collideLineCircle(
+      x,
+      y,
+      lineX,
+      lineY,
+      food[i],
+      food[i + 1],
+      foodSize
+    )
+    if (hitFood) {
+      const distance = dist(x, y, hitFood[0], hitFood[1])
+      if (distance < shortestDistance) {
+        hit = distance
+        lineX = hitFood[0]
+        lineY = hitFood[1]
+        isFood = 1
+        from = 0
+      }
+    }
   }
+
+  // const hitFood =
+  //   food
+  //     .map(piece =>
+  //       collideLineCircle(x, y, lineX, lineY, piece.x, piece.y, foodSize)
+  //     )
+  //     .find(Boolean) || 0
+
+  // if (hitFood) {
+  //   hit = dist(x, y, hitFood[0], hitFood[1])
+  //   lineX = hitFood[0]
+  //   lineY = hitFood[1]
+  //   isFood = 1
+  //   from = 0
+  // }
 
   return {
     x: lineX,
@@ -255,6 +286,10 @@ module.exports = function getInputLayer(
   },
   done
 ) {
+  const snakesListTyped = new Float32Array(snakesList)
+  const foodTyped = new Float32Array(food)
+  const bordersTyped = new Float32Array(borders)
+
   const inputLayer = []
   const step = (Math.PI * 2) / (displayedWhiskers * 1.2)
 
@@ -267,16 +302,16 @@ module.exports = function getInputLayer(
       y,
       angle,
       whiskerSize,
-      snakesList,
+      snakesListTyped,
       id,
       size,
-      food,
+      foodTyped,
       foodSize,
-      borders
+      bordersTyped
     )
 
     const closestDistance = Math.min(result.hit, whiskerSize)
-  const hitNormalised = map(closestDistance, whiskerSize, 0, 0, 1)
+    const hitNormalised = map(closestDistance, whiskerSize, 0, 0, 1)
     inputLayer.push(hitNormalised, result.from, result.isFood)
   }
   done(inputLayer)

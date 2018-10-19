@@ -168,8 +168,11 @@ class Pool {
     this.genomes = this.buildInitGenomes()
   }
 
-  evaluateGenome(networkInputs, genomeIndex) {
-    const output = this.genomes[genomeIndex].network.activate(networkInputs)
+  evaluateGenome(inputsBuffer) {
+    const inputs = new Float32Array(inputsBuffer)
+    const genomeIndex = inputs[inputs.length - 1]
+    
+    const output = this.genomes[genomeIndex].network.activate(inputs)
     return output
   }
 

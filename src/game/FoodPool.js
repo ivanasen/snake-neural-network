@@ -56,7 +56,7 @@ class FoodPool {
     // }
     
     noStroke()
-    fill(this.hue, 40, 70)
+    fill(this.hue, 62, 35)
     ellipse(x, y, size / 2, size / 2)
   }
 }

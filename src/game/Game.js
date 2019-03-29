@@ -35,7 +35,7 @@ class Game {
   }
 
   reset() {
-    background(180, 30, 6)
+    background(217, 0, 96.5)
 
     this.snakesList = []
 
@@ -64,8 +64,8 @@ class Game {
     }
   }
 
-  clear() {
-    this.debug ? background(0, 0, 0) : background(360, 100, 0, 0.03)
+  clear() { 
+    this.debug ? background(0, 0, 100) : background(0, 0, 100, 0.05)
   }
 
   handleNextTick() {

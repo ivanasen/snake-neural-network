@@ -24,7 +24,7 @@ class Snake {
     this.snakesList = snakesList
     this.canvasWidth = canvasWidth
     this.canvasHeight = canvasHeight
-    this.hue = ((Math.random() * 50) % 50) + 180
+    this.hue = 217
     this.history = []
     this.speed = config.SnakeSpeed //maxspeed
     this.size = config.SnakeSize
@@ -268,8 +268,8 @@ class Snake {
     // drawingContext.fillStyle = gradient
     // noStroke()
     // ellipse(this.pos.x, this.pos.y, config.SnakeBlurSize, config.SnakeBlurSize)
-
-    fill(this.hue, 90, 70)
+    
+    fill(this.hue, 62, 91)
     ellipse(this.pos.x, this.pos.y, this.size, this.size)
   }
 

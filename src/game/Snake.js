@@ -206,24 +206,24 @@ class Snake {
       return colliding
     })
 
-    const collidesWithRect = collidePointRect(
-      this.pos.x,
-      this.pos.y,
-      (this.canvasWidth - config.CenterEllipseWidth) / 2,
-      (this.canvasHeight - config.CenterEllipseHeight) / 2,
-      config.CenterEllipseWidth,
-      config.CenterEllipseHeight
-    )
+    // const collidesWithRect = collidePointRect(
+    //   this.pos.x,
+    //   this.pos.y,
+    //   (this.canvasWidth - config.CenterEllipseWidth) / 2,
+    //   (this.canvasHeight - config.CenterEllipseHeight) / 2,
+    //   config.CenterEllipseWidth,
+    //   config.CenterEllipseHeight
+    // )
 
     const isOutOfBounds =
       this.pos.x > this.canvasWidth ||
       this.pos.x < 0 ||
       this.pos.y > this.canvasHeight ||
       this.pos.y < 0
-    if (isOutOfBounds || collidesWithRect) {
+    if (isOutOfBounds) {
       this.stop()
     }
-    return isColliding || isOutOfBounds || collidesWithRect
+    return isColliding || isOutOfBounds
   }
 
   stop() {

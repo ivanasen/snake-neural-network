@@ -1,0 +1,82 @@
+body {
+  min-height: 100vh;
+  font-family: Helvetica;
+  font-size: 13px;
+  position: relative;
+  padding: 0;
+  margin: 0; }
+
+#see-from-beginning {
+  position: absolute;
+  bottom: 8px;
+  z-index: 42;
+  transform: translateX(-50%); }
+
+#debug {
+  width: 420px;
+  height: 420px;
+  position: relative;
+  margin: auto;
+  padding-top: 10px; }
+
+#snakes-animation-holder {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 400px;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  background-color: #0d0e0e;
+  opacity: 0;
+  transition: opacity 1s ease-in-out; }
+  #snakes-animation-holder.ready {
+    opacity: 1; }
+
+#info-holder {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1;
+  margin: 0px;
+  padding: 10px;
+  padding-top: 5px;
+  background-color: rgba(41, 54, 58, 0.8);
+  border-radius: 10px;
+  transition: opacity 0.25s ease-in-out; }
+
+#hide-info-btn,
+#show-info-btn {
+  color: #f8f8f8;
+  margin-right: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+  line-height: 1;
+  transition: opacity 0.25s ease-in-out; }
+
+#charts-holder {
+  display: flex; }
+
+#show-info-btn {
+  position: absolute;
+  bottom: 30px;
+  right: 30px; }
+
+#fitness-chart-holder,
+#age-chart-holder {
+  margin-left: 10px;
+  border-radius: 5px; }
+
+.charts {
+  margin: auto;
+  text-align: center; }
+
+div#info-holder.invisible,
+a#show-info-btn.invisible {
+  opacity: 0;
+  z-index: -1; }
+
+/*# sourceMappingURL=main.f11314bcf0b0449a7a8f7e52aa678d29.css.map*/

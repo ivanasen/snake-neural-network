@@ -30,7 +30,7 @@ class SaveManager {
   }
 
   getSaticSave() {
-    return axios.get('/saves/147.json').then(
+    return axios.get('https://comrade-coop.github.io/scynet-snakes-animation/saves/147.json').then(
       res => res.data,
       rej => {
         console.log(rej)

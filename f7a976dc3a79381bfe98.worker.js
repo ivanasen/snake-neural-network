@@ -22175,7 +22175,7 @@ var SaveManager = function () {
   }, {
     key: 'getSaticSave',
     value: function getSaticSave() {
-      return _axios2.default.get('/saves/147.json').then(function (res) {
+      return _axios2.default.get('https://comrade-coop.github.io/scynet-snakes-animation/saves/147.json').then(function (res) {
         return res.data;
       }, function (rej) {
         console.log(rej);
@@ -22525,4 +22525,4 @@ var pool = exports.pool = new Pool();
 /***/ })
 
 /******/ });
-//# sourceMappingURL=af8802af330ff9633149.worker.js.map
+//# sourceMappingURL=f7a976dc3a79381bfe98.worker.js.map

@@ -1,6 +1,7 @@
 import path from 'path'
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CleanWebpackPlugin from 'clean-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 
 export default {
@@ -56,6 +57,7 @@ export default {
     new HtmlWebpackPlugin({
       title: 'Neuroevolution of snakes',
       template: 'src/index.html.ejs'
-    })
+    }),
+    new CleanWebpackPlugin()
   ]
 }

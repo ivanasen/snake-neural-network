@@ -24,7 +24,7 @@ class Snake {
     this.snakesList = snakesList
     this.canvasWidth = canvasWidth
     this.canvasHeight = canvasHeight
-    this.hue = 217
+    this.color = config.Snake.Color
     this.history = []
     this.speed = config.SnakeSpeed //maxspeed
     this.size = config.SnakeSize
@@ -227,6 +227,18 @@ class Snake {
   }
 
   stop() {
+    const history = this.history.slice()
+    setTimeout(() => {
+      history.forEach(pos => {
+        fill(
+          config.Game.ClearBackground.h,
+          config.Game.ClearBackground.s,
+          config.Game.ClearBackground.b
+        )
+        ellipse(pos.x, pos.y, this.size * 1.5, this.size * 1.5)
+      })
+    }, 700)
+
     this.resetPosition()
     this.resultToMatch += config.DieReward
   }
@@ -255,22 +267,23 @@ class Snake {
   }
 
   showTrail() {
-    // const gradient = drawingContext.createRadialGradient(
-    //   this.pos.x,
-    //   this.pos.y,
-    //   0,
-    //   this.pos.x,
-    //   this.pos.y,
-    //   config.SnakeBlurSize / 2
-    // )
-    // gradient.addColorStop(0, `hsla(${this.hue}, 90%, 50%, 0.2)`)
-    // gradient.addColorStop(1, 'transparent')
-    // drawingContext.fillStyle = gradient
-    // noStroke()
-    // ellipse(this.pos.x, this.pos.y, config.SnakeBlurSize, config.SnakeBlurSize)
-    
-    fill(this.hue, 62, 91)
+    fill(this.color.h, this.color.s, this.color.b)
     ellipse(this.pos.x, this.pos.y, this.size, this.size)
+
+    if (this.history.length) {
+      const lastHistoryPos = this.history[0]
+      fill(
+        config.Game.ClearBackground.h,
+        config.Game.ClearBackground.s,
+        config.Game.ClearBackground.b
+      )
+      ellipse(
+        lastHistoryPos.x,
+        lastHistoryPos.y,
+        this.size * 1.5,
+        this.size * 1.5
+      )
+    }
   }
 
   move = () => {

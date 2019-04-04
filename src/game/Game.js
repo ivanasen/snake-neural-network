@@ -16,6 +16,9 @@ class Game {
     this.frameCount = 0
     this.width = width
     this.height = height
+    this.initialBackground = config.Game.InitialBackground
+    this.clearBackground = config.Game.ClearBackground
+    this.debugBackground = config.Game.DebugBackground
     this.shouldEvolve = config.ShouldEvolve
     this.setupCharts()
   }
@@ -35,7 +38,11 @@ class Game {
   }
 
   reset() {
-    background(217, 0, 96.5)
+    background(
+      this.initialBackground.h,
+      this.initialBackground.s,
+      this.initialBackground.b
+    )
 
     this.snakesList = []
 
@@ -53,19 +60,30 @@ class Game {
 
     setTimeout(() => $('#snakes-animation-holder').addClass('ready'), 3000)
   }
-  
+
   draw() {
     if (!this.snakesList) return
     this.clear()
     this.foodPool.draw()
-    
+
     for (let i = 0; i < this.simulationSpeed; i++) {
       this.handleNextTick()
     }
   }
 
-  clear() { 
-    this.debug ? background(0, 0, 100) : background(0, 0, 100, 0.05)
+  clear() {
+    this.debug
+      ? background(
+          this.debugBackground.h,
+          this.debugBackground.s,
+          this.debugBackground.b
+        )
+      : background(
+          this.clearBackground.h,
+          this.clearBackground.s,
+          this.clearBackground.b,
+          this.clearBackground.a
+        )
   }
 
   handleNextTick() {

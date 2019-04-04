@@ -10,11 +10,11 @@ class FoodPool {
     this.foodSize = config.FoodSize
     this.pulseInterval = config.FoodPulseInterval
     this.pulseTicks = this.pulseInterval
-    this.hue = config.FoodHue
+    this.color = config.Food.Color
     this.food = this.generateFood()
   }
 
-  generateFood() {    
+  generateFood() {
     return _.fill(new Array(this.amount), 0).map(() => this.generateFoodPiece())
   }
 
@@ -24,6 +24,13 @@ class FoodPool {
 
   eat(foodIndex) {
     if (this.food[foodIndex]) {
+      const eatenFood = this.food[foodIndex]
+      setTimeout(() => {
+        fill(config.Game.ClearBackground.h, config.Game.ClearBackground.s, config.Game.ClearBackground.b)
+        ellipse(eatenFood.x, eatenFood.y, this.foodSize / 1.7, this.foodSize / 1.7)
+      }, 700)
+      
+
       this.food[foodIndex] = this.generateFoodPiece()
     }
   }
@@ -35,7 +42,7 @@ class FoodPool {
   }
 
   drawFoodPiece(x, y, size) {
-    // if (++this.pulseTicks > this.pulseInterval) {      
+    // if (++this.pulseTicks > this.pulseInterval) {
     //   const gradient = drawingContext.createRadialGradient(
     //     x,
     //     y,
@@ -54,9 +61,9 @@ class FoodPool {
     //     this.pulseTicks = 0
     //   }
     // }
-    
+
     noStroke()
-    fill(this.hue, 62, 35)
+    fill(this.color.h, this.color.s, this.color.b)
     ellipse(x, y, size / 2, size / 2)
   }
 }

@@ -6,7 +6,7 @@ config.set({
   }
 })
 
-const pool = new Pool()
+const pool = new Pool(4)
 
 pool.run('workerUtil.js')
 

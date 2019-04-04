@@ -16,7 +16,6 @@
   "FoodSize": 25,
   "FoodAmount": 10,
   "FoodPulseInterval": 480,
-  "FoodHue": 217,
   "SimulationSpeed": 1,
   "SnakeDirectionUpdatePeriod": 2,
   "CenterEllipseWidth": 800,
@@ -28,5 +27,37 @@
   "Debug": false,
   "EatFoodReward": 20,
   "DieReward": -30,
-  "SameDirectionReward": -1
+  "SameDirectionReward": -1,
+  "Game": {
+    "InitialBackground": {
+      "h": 219.66,
+      "s": 65.56,
+      "b": 35.29
+    },
+    "ClearBackground": {
+      "h": 219.66,
+      "s": 65.56,
+      "b": 35.29,
+      "a": 0.05
+    },
+    "DebugBackground": {
+      "h": 0,
+      "s": 0,
+      "b": 100
+    }
+  },
+  "Snake": {
+    "Color": {
+      "h": 219.66,
+      "s": 65.56,
+      "b": 91
+    }
+  },
+  "Food": {
+    "Color": {
+      "h": 210,
+      "s": 0.86,
+      "b": 90.98
+    }
+  }
 }

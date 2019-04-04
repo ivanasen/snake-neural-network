@@ -2,12 +2,15 @@
   "name": "snakeneuralnetwork",
   "version": "1.0.0",
   "description": "N.E.A.T implementation in javascript allowing snakes to learn to fight by neuroevolution of their neural network and genetics",
+  "homepage": "https://comrade-coop.github.io/scynet-snakes-animation",
   "main": "index.js",
   "scripts": {
     "test": "babel-tape-runner tests/*.js | ./node_modules/.bin/tap-diff",
     "hot-server": "NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config ./webpack.config.development.js",
     "build": "NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --progress --profile --colors",
-    "start": "node server.js"
+    "start": "node server.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "author": "ivanasen",
   "license": "MIT",
@@ -35,6 +38,7 @@
     "css-loader": "^0.28.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^2.0.0",
+    "gh-pages": "^2.0.1",
     "html-webpack-plugin": "^2.28.0",
     "json-loader": "^0.5.4",
     "make-dir-webpack-plugin": "^0.1.0",

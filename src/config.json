@@ -2,7 +2,7 @@
   "InputSize": 150,
   "HiddenLayerSize": 15,
   "Outputs": 1,
-  "Population": 15,
+  "Population": 10,
   "KeepAlivePercent": 0.25,
   "MutationChance": 0.2,
   "GenerationLength": 3000,

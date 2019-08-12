@@ -22106,7 +22106,7 @@ module.exports = function(module) {
 /***/ "./src/config.json":
 /***/ (function(module, exports) {
 
-module.exports = {"InputSize":150,"HiddenLayerSize":15,"Outputs":1,"Population":10,"KeepAlivePercent":0.25,"MutationChance":0.2,"GenerationLength":3000,"NbWhiskers":50,"WhiskerSize":400,"InputsPerWhisker":3,"SnakeMaxLength":20,"SnakeSize":5,"SnakeBlurSize":20,"SnakeSpeed":3,"FoodSize":25,"FoodAmount":10,"FoodPulseInterval":480,"SimulationSpeed":1,"SnakeDirectionUpdatePeriod":2,"CenterEllipseWidth":800,"CenterEllipseHeight":300,"ChartMainColor":"hsl(210, 90%, 70%)","ChartFillColor":"hsl(210, 90%, 70%, 0.3)","ChartSecondaryColor":"hsl(210, 40%, 40%)","ShouldEvolve":false,"Debug":false,"EatFoodReward":20,"DieReward":-30,"SameDirectionReward":-1,"Game":{"InitialBackground":{"h":219.66,"s":65.56,"b":35.29},"ClearBackground":{"h":219.66,"s":65.56,"b":35.29,"a":0.05},"DebugBackground":{"h":0,"s":0,"b":100}},"Snake":{"Color":{"h":219.66,"s":65.56,"b":91}},"Food":{"Color":{"h":210,"s":0.86,"b":90.98}}}
+module.exports = {"InputSize":150,"HiddenLayerSize":15,"Outputs":1,"Population":6,"KeepAlivePercent":0.25,"MutationChance":0.2,"GenerationLength":3000,"NbWhiskers":50,"WhiskerSize":400,"InputsPerWhisker":3,"SnakeMaxLength":20,"SnakeSize":5,"SnakeBlurSize":20,"SnakeSpeed":3,"FoodSize":25,"FoodAmount":10,"FoodPulseInterval":480,"SimulationSpeed":1,"SnakeDirectionUpdatePeriod":2,"CenterEllipseWidth":800,"CenterEllipseHeight":300,"ChartMainColor":"hsl(210, 90%, 70%)","ChartFillColor":"hsl(210, 90%, 70%, 0.3)","ChartSecondaryColor":"hsl(210, 40%, 40%)","ShouldEvolve":false,"Debug":false,"EatFoodReward":20,"DieReward":-30,"SameDirectionReward":-1,"Game":{"InitialBackground":{"h":219.66,"s":65.56,"b":35.29},"ClearBackground":{"h":219.66,"s":65.56,"b":35.29,"a":0.05},"DebugBackground":{"h":0,"s":0,"b":100}},"Snake":{"Color":{"h":219.66,"s":65.56,"b":91}},"Food":{"Color":{"h":210,"s":0.86,"b":90.98}}}
 
 /***/ }),
 
@@ -22525,4 +22525,4 @@ var pool = exports.pool = new Pool();
 /***/ })
 
 /******/ });
-//# sourceMappingURL=45b98c7f78be9ee7cb5d.worker.js.map
+//# sourceMappingURL=f73960ef9d61639f7411.worker.js.map
